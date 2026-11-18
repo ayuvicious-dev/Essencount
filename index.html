@@ -142,9 +142,12 @@ small{font-size:calc(12.5px*var(--fs));color:var(--muted)}
 .page-head p{color:var(--muted);font-size:calc(14px*var(--fs));margin-top:2px}
 .tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .grid{display:grid;gap:18px}
+.grid>*{min-width:0}
+.grid.cols{grid-template-columns:minmax(0,1fr)}
 @media(min-width:960px){.grid.cols{grid-template-columns:1.55fr 1fr;align-items:start}.grid.stats3{grid-template-columns:repeat(3,1fr)}}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px}
 .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px}
+@media(max-width:480px){.panel-head{flex-wrap:wrap}}
 .link{color:var(--primary-text);font-weight:700;font-size:calc(13.5px*var(--fs))}
 
 .hero{position:relative;overflow:hidden;border-radius:24px;padding:20px 20px 22px;color:#0A2150;background:linear-gradient(140deg,#8CB6E0 0%,#5D92C9 100%);margin-bottom:18px}
@@ -502,6 +505,16 @@ form[data-form=debtpay] .f>span{font-size:calc(12px*var(--fs))}
   .tbl-m tbody td .jr-ac{text-align:right}
 }
 .pp-tbl .no-link{text-align:left}
+@media(max-width:640px){
+  .debt-scroll .tbl-m tbody tr{display:flex;flex-direction:column;height:auto}
+  .debt-scroll .tbl-m tbody td{padding-top:8px;padding-bottom:8px}
+  .debt-scroll .tbl-m tbody td.tbl-act{order:9;border-bottom:0;padding-bottom:6px}
+  .debt-scroll .tbl-m tbody tr td:last-child{border-bottom:1px solid var(--line)}
+  .tbl-m tbody td.tbl-empty{justify-content:center;text-align:center!important}
+  .tbl-m tbody td.tbl-empty::before{display:none}
+  .debt-scroll .tbl-m tbody tr td.tbl-empty{border-bottom:0}
+  .pp-tbl.tbl-m .pp-chk input[type=checkbox]{width:18px;height:18px}
+}
 
 .badge.green{background:rgba(10,138,96,.12);color:var(--pos)}
 .chk.slim{align-items:center;height:42px;margin-bottom:10px;padding:0 12px}
@@ -592,7 +605,7 @@ form[data-form=debtpay] .f>span{font-size:calc(12px*var(--fs))}
 .bs-row{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:calc(14px*var(--fs))}
 .bs-row .nm{display:flex;align-items:center;gap:8px;min-width:0;font-weight:600}
 .bs-row b{white-space:nowrap;font-weight:700}
-.bs-row .cd{font-style:normal;font-size:calc(12px*var(--fs));color:var(--muted);font-weight:600;flex:none}
+.bs-row .cd{display:none}
 .bs-hdr,.bs-link{cursor:pointer}
 .bs-link:hover{background:var(--surface2)}
 .sheet.sheet-xl{max-width:860px}
@@ -655,6 +668,12 @@ form[data-form=debtpay] .f>span{font-size:calc(12px*var(--fs))}
 .plc-acc td:first-child{white-space:normal;min-width:190px}
 .plc-acc td.acc{font-weight:400;padding-left:24px}
 .plc-acc tr.sec td,.plc-acc tr.sec td:first-child{background:var(--surface2);font-weight:800}
+.plc-tbl.plc-fit{table-layout:fixed;width:100%}
+.plc-tbl.plc-fit th,.plc-tbl.plc-fit td{padding:9px 3px;font-size:calc(11.5px*var(--fs))}
+.plc-tbl.plc-fit th{white-space:normal;line-height:1.25}
+.plc-tbl.plc-fit th:first-child,.plc-tbl.plc-fit td:first-child{position:static;width:28%;min-width:0;white-space:normal;overflow-wrap:anywhere;padding-left:8px;line-height:1.3}
+.plc-tbl.plc-fit td.acc{padding-left:14px}
+.plc-tbl.plc-fit th:last-child,.plc-tbl.plc-fit td:last-child{padding-right:8px}
 .plc-tbl td{font-size:calc(13px*var(--fs))}
 /* rincian arus kas: judul aktivitas dan judul kelompok menempel saat di-scroll, lalu berganti saat kelompok/aktivitas berikutnya naik (seperti buku besar) */
 .cf-sec .bs-grp-h{position:sticky;top:calc(var(--top-h,56px) + var(--tabs-h,62px));z-index:8;box-sizing:border-box;height:calc(38px*var(--fs));padding-top:0;padding-bottom:0;align-items:center;box-shadow:0 -6px 0 var(--surface)}
@@ -666,12 +685,25 @@ form[data-form=debtpay] .f>span{font-size:calc(12px*var(--fs))}
 .gl-head b{font-size:calc(15px*var(--fs));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .gl-head small{color:var(--muted);font-size:calc(12.5px*var(--fs));white-space:nowrap}
 .gl-tbl th{position:sticky;top:calc(var(--top-h,56px) + var(--tabs-h,62px) + 38px*var(--fs));z-index:7;background:var(--surface);box-shadow:0 1px 0 var(--line)}
-@media(min-width:641px){.gl-sec .tbl-wrap{overflow:visible;margin:0}.tbl.gl-tbl{min-width:0}}
-.tbl.gl-tbl{min-width:640px}
+.gl-sec .tbl-wrap{overflow:visible;margin:0}
+.tbl.gl-tbl{min-width:0;width:100%}
 .gl-tbl td{font-size:calc(13px*var(--fs))}
 .gl-tbl .nowrap{white-space:nowrap}
 .gl-tbl td.gl-desc{white-space:normal;overflow-wrap:anywhere;min-width:180px}
 .gl-tbl th.r,.gl-tbl td.r{text-align:right}
+/* HP: format sama dengan desktop, tanpa geser horizontal; judul akun & header kolom tetap freeze saat scroll */
+@media(max-width:640px){
+  .gl-panel{padding:14px 10px}
+  .gl-tbl th,.gl-tbl td{padding:7px 3px;line-height:1.3}
+  .gl-tbl td{font-size:calc(clamp(9px,2.7vw,11px)*var(--fs))}
+  .gl-tbl th{font-size:calc(clamp(9px,2.6vw,10.5px)*var(--fs));white-space:normal}
+  .gl-tbl th:first-child,.gl-tbl td:first-child{padding-left:2px}
+  .gl-tbl th:last-child,.gl-tbl td:last-child{padding-right:2px}
+  .gl-tbl td:nth-child(1),.gl-tbl td:nth-child(2){white-space:normal;overflow-wrap:anywhere}
+  .gl-tbl td.gl-desc{min-width:0;overflow-wrap:anywhere}
+  .gl-head b{font-size:calc(14px*var(--fs))}
+  .gl-head small{font-size:calc(11px*var(--fs))}
+}
 #glSearch::placeholder{font-size:calc(13px*var(--fs))}
 .bs-lnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}
 .bs-lnav .btn:disabled{opacity:.4;cursor:default}
@@ -916,14 +948,25 @@ function txRow(t){
 function emptyBlock(icon,title,text,btn){
   return `<div class="empty"><span class="ring">${ico(icon,26)}</span><b>${esc(title)}</b>${text?`<span>${esc(text)}</span>`:''}${btn||''}</div>`;
 }
+let BAR_W=0,BAR_S=null;
+function barFit(){
+  for(let i=0;i<2;i++){
+    const sv=document.querySelector('.cash-chart');if(!sv||!BAR_S)return;
+    const w=Math.floor(sv.getBoundingClientRect().width);
+    if(w<150||Math.abs(w-BAR_W)<=1)return;
+    BAR_W=w;sv.outerHTML=barChart(BAR_S);
+  }
+}
+let barT;window.addEventListener('resize',()=>{clearTimeout(barT);barT=setTimeout(barFit,120)});
 function barChart(s){
-  const W=600,H=230,L=48,R=6,T=10,B=28,ph=H-T-B,pw=W-L-R;
+  BAR_S=s;
+  const W=BAR_W||600,H=230,L=48,R=6,T=10,B=28,ph=H-T-B,pw=W-L-R;
   const mx=niceMax(Math.max(...s.flatMap(x=>[x.inc,x.out]),100000));
   const step=pw/s.length,bw=Math.min(20,step/3.2);let g='';
   for(let i=0;i<=4;i++){const y=T+ph-ph*i/4;g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" class="gl"/><text x="${L-8}" y="${y+4}" text-anchor="end" class="gt">${compact(mx*i/4)}</text>`}
   s.forEach((x,i)=>{const cx=L+step*i+step/2,hi=x.inc/mx*ph,ho=x.out/mx*ph;
     g+=`<rect x="${cx-bw-2}" y="${T+ph-hi}" width="${bw}" height="${hi}" rx="5" class="b-in"/><rect x="${cx+2}" y="${T+ph-ho}" width="${bw}" height="${ho}" rx="5" class="b-out"/><text x="${cx}" y="${H-8}" text-anchor="middle" class="gt${i===s.length-1?' on':''}">${shortMonth(x.k)}</text>`});
-  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Grafik arus kas enam bulan terakhir" class="chart">${g}</svg>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Grafik arus kas enam bulan terakhir" class="chart cash-chart">${g}</svg>`;
 }
 
 /* Transaksi pada satu tanggal (pembelian, biaya, aset, transaksi cepat, jurnal umum, stock opname); amortisasi & penyusutan otomatis tidak ditampilkan */
@@ -982,11 +1025,11 @@ function viewDashboard(){
     </div>
     <div class="grid">
       <section class="panel"><div class="panel-head"><h2>Stok Minimum</h2>${low.length?`<button class="link" data-act="nav" data-page="inventory">Buka</button>`:''}</div>
-        <div class="tbl-wrap"><table class="tbl pp-tbl" style="min-width:0"><colgroup><col><col style="width:92px"><col style="width:132px"></colgroup><thead><tr><th style="text-align:left">Nama Produk</th><th>Minimum</th><th>Stok</th></tr></thead><tbody>${low.map(i=>`<tr><td><button type="button" class="link no-link" data-act="edit-item" data-id="${esc(i.id)}"><b>${esc(i.name)}</b></button></td><td class="nowrap">${i.min||0} ${esc(i.unit||'')}</td><td class="nowrap"><b class="num ${(i.qty||0)<=0?'neg':''}">${+(i.qty||0).toFixed(2)}</b> ${(i.qty||0)<=0?'<span class="badge red">Habis</span>':'<span class="badge">Menipis</span>'}</td></tr>`).join('')}</tbody></table></div></section>
+        <div class="tbl-wrap"><table class="tbl pp-tbl tbl-m" style="min-width:0"><colgroup><col><col style="width:92px"><col style="width:132px"></colgroup><thead><tr><th style="text-align:left">Nama Produk</th><th>Minimum</th><th>Stok</th></tr></thead><tbody>${low.map(i=>`<tr><td data-l="Nama Produk"><button type="button" class="link no-link" data-act="edit-item" data-id="${esc(i.id)}"><b>${esc(i.name)}</b></button></td><td class="nowrap" data-l="Minimum">${i.min||0} ${esc(i.unit||'')}</td><td class="nowrap" data-l="Stok"><span><b class="num ${(i.qty||0)<=0?'neg':''}">${+(i.qty||0).toFixed(2)}</b> ${(i.qty||0)<=0?'<span class="badge red">Habis</span>':'<span class="badge">Menipis</span>'}</span></td></tr>`).join('')}</tbody></table></div></section>
       <section class="panel"><div class="panel-head"><h2>Segera Kadaluwarsa</h2>${expAll.length?`<button class="link" data-act="nav" data-page="inventory">Buka</button>`:''}</div>
-        ${expSoon.length?`<div class="tbl-wrap"><table class="tbl pp-tbl"><colgroup><col style="width:48px"><col><col style="width:116px"><col style="width:112px"></colgroup><thead><tr><th title="Centang jika sudah ditangani (akan dihapus dari daftar)" aria-label="Selesai ditangani">${ico('check',18)}</th><th>Nama Produk</th><th>Kadaluwarsa</th><th>Sisa</th></tr></thead><tbody>${expSoon.map(({j,it,days})=>`<tr><td class="pp-chk"><input type="checkbox" data-act="expiry-done" data-id="${esc(j.id)}" aria-label="Tandai sudah ditangani"></td><td><button type="button" class="link no-link" data-act="edit-item" data-id="${esc(it.id)}"><b>${esc(it.name)}</b></button></td><td class="nowrap">${fmtDate(j.expiry)}</td><td class="nowrap"><b class="${days<=7?'neg':''}">${days<=0?'Hari ini':'H-'+days}</b></td></tr>`).join('')}</tbody></table></div>${expAll.length>expSoon.length?`<p class="muted" style="margin-top:8px">+${expAll.length-expSoon.length} lainnya</p>`:''}`:`<p class="muted">Tidak ada stok yang akan kadaluwarsa dalam 1 bulan ke depan.</p>`}</section>
+        ${expSoon.length?`<div class="tbl-wrap"><table class="tbl pp-tbl tbl-m"><colgroup><col style="width:48px"><col><col style="width:116px"><col style="width:112px"></colgroup><thead><tr><th title="Centang jika sudah ditangani (akan dihapus dari daftar)" aria-label="Selesai ditangani">${ico('check',18)}</th><th>Nama Produk</th><th>Kadaluwarsa</th><th>Sisa</th></tr></thead><tbody>${expSoon.map(({j,it,days})=>`<tr><td class="pp-chk" data-l="Selesai ditangani"><input type="checkbox" data-act="expiry-done" data-id="${esc(j.id)}" aria-label="Tandai sudah ditangani"></td><td data-l="Nama Produk"><button type="button" class="link no-link" data-act="edit-item" data-id="${esc(it.id)}"><b>${esc(it.name)}</b></button></td><td class="nowrap" data-l="Kadaluwarsa">${fmtDate(j.expiry)}</td><td class="nowrap" data-l="Sisa"><b class="${days<=7?'neg':''}">${days<=0?'Hari ini':'H-'+days}</b></td></tr>`).join('')}</tbody></table></div>${expAll.length>expSoon.length?`<p class="muted" style="margin-top:8px">+${expAll.length-expSoon.length} lainnya</p>`:''}`:`<p class="muted">Tidak ada stok yang akan kadaluwarsa dalam 1 bulan ke depan.</p>`}</section>
       <section class="panel"><div class="panel-head"><h2>Biaya Dibayar di Muka</h2>${prepaidAll.length?`<button class="link" data-act="nav" data-page="biaya">Buka</button>`:''}</div>
-        <div class="tbl-wrap"><table class="tbl pp-tbl"><colgroup><col style="width:48px"><col><col style="width:104px"><col style="width:128px"></colgroup><thead><tr><th title="Centang jika sudah diperpanjang (akan dihapus dari daftar)" aria-label="Selesai diperpanjang">${ico('check',18)}</th><th>Nama Beban</th><th>Habis pada</th><th>Sisa</th></tr></thead><tbody>${prepaidEnd.map(({j,left,end})=>`<tr><td class="pp-chk"><input type="checkbox" data-act="prepaid-done" data-id="${esc(j.id)}" aria-label="Tandai sudah diperpanjang"></td><td><button type="button" class="link no-link" data-act="jrn-open" data-id="${esc(j.id)}"><b>${esc(coaNameOnly(j.debitAcc))}</b></button></td><td class="nowrap">${fmtDate(end)}</td><td class="nowrap"><b class="${left<0?'neg':''}">${left>0?left+' hari':left===0?'Hari ini':'terlewat '+(-left)+' hari'}</b></td></tr>`).join('')}</tbody></table></div>${prepaidAll.length>prepaidEnd.length?`<p class="muted" style="margin-top:8px">+${prepaidAll.length-prepaidEnd.length} lainnya di halaman Biaya</p>`:''}</section>
+        <div class="tbl-wrap"><table class="tbl pp-tbl tbl-m"><colgroup><col style="width:48px"><col><col style="width:104px"><col style="width:128px"></colgroup><thead><tr><th title="Centang jika sudah diperpanjang (akan dihapus dari daftar)" aria-label="Selesai diperpanjang">${ico('check',18)}</th><th>Nama Beban</th><th>Habis pada</th><th>Sisa</th></tr></thead><tbody>${prepaidEnd.map(({j,left,end})=>`<tr><td class="pp-chk" data-l="Selesai diperpanjang"><input type="checkbox" data-act="prepaid-done" data-id="${esc(j.id)}" aria-label="Tandai sudah diperpanjang"></td><td data-l="Nama Beban"><button type="button" class="link no-link" data-act="jrn-open" data-id="${esc(j.id)}"><b>${esc(coaNameOnly(j.debitAcc))}</b></button></td><td class="nowrap" data-l="Habis pada">${fmtDate(end)}</td><td class="nowrap" data-l="Sisa"><b class="${left<0?'neg':''}">${left>0?left+' hari':left===0?'Hari ini':'terlewat '+(-left)+' hari'}</b></td></tr>`).join('')}</tbody></table></div>${prepaidAll.length>prepaidEnd.length?`<p class="muted" style="margin-top:8px">+${prepaidAll.length-prepaidEnd.length} lainnya di halaman Biaya</p>`:''}</section>
       <section class="panel"><div class="panel-head"><h2>Transaksi terbaru</h2><div class="f" style="margin:0;width:176px"><div class="date-wrap"><input id="recDate" class="dtx" inputmode="numeric" autocomplete="off" maxlength="10" aria-label="Tanggal transaksi (dd/mm/yyyy)" value="${dmy(S.recDate||today())}"><button type="button" class="date-btn" data-act="pick-date" aria-label="Pilih dari kalender">${ico('calendar',20)}</button><input type="date" class="date-native" value="${esc(S.recDate||today())}" tabindex="-1" aria-hidden="true"></div></div></div>
         <div id="recList">${recListHTML()}</div></section>
     </div>
@@ -1257,7 +1300,7 @@ function debtTableHTML(){
   const q=(S.debtQ||'').trim().toLowerCase(),DA=debtReminders().filter(x=>!q||[x.desc,coaNameOnly(x.acc),String(x.rest),rp(x.rest),fmtDate(x.due)].join(' ').toLowerCase().includes(q)),PG=5,np=Math.max(1,Math.ceil(DA.length/PG));
   S.debtPage=Math.min(Math.max(0,S.debtPage||0),np-1);
   const DS=DA.slice(S.debtPage*PG,S.debtPage*PG+PG),pager=DA.length>PG?`<div class="debt-pg"><button type="button" class="btn sm" data-act="debt-pg" data-d="-1" aria-label="Sebelumnya"${S.debtPage<=0?' disabled':''}>${ico('chevL',18)}</button><span class="muted">${S.debtPage+1} / ${np}</span><button type="button" class="btn sm" data-act="debt-pg" data-d="1" aria-label="Selanjutnya"${S.debtPage>=np-1?' disabled':''}>${ico('chevR',18)}</button></div>`:'';
-  return `<div class="tbl-wrap debt-scroll"><table class="tbl pp-tbl" style="min-width:0"><thead><tr><th>Aksi</th><th style="text-align:left">Ket</th><th>Rp</th><th>Tgl</th><th>Sisa</th></tr></thead><tbody>${DS.length?DS.map(x=>`<tr><td><button type="button" class="btn sm primary" data-act="debt-pay" data-src="${x.src}" data-id="${esc(x.id)}">Bayar</button></td><td><button type="button" class="link no-link" data-act="jrn-open"${x.src==='a'?' data-k="a"':''} data-id="${esc(x.id)}"><b>${esc(x.desc||coaNameOnly(x.acc))}</b></button></td><td class="num nowrap"><b>${rp(x.rest)}</b>${x.paid>0?`<div class="muted">dari ${rp(x.amt)}</div>`:''}</td><td class="nowrap debt-dt" data-src="${x.src}" data-id="${esc(x.id)}" title="Klik 2x untuk ubah tanggal" style="cursor:pointer">${fmtDate(x.due)}</td><td><b class="${x.left<=3?'neg':''}">${x.left>0?'H-'+x.left:x.left===0?'Hari ini':'Lewat '+(-x.left)+' hari'}</b></td></tr>`).join(''):`<tr><td colspan="5" class="muted" style="text-align:center;padding:22px 12px">${S.debtQ?'Tidak ada hasil untuk pencarian ini.':'Tidak ada pengingat hutang.'}</td></tr>`}</tbody></table></div>${pager}${DA.length?`<div class="debt-total"><span>${S.debtQ?'Total hasil pencarian':'Total hutang'}</span><b class="num">${rp(DA.reduce((t,x)=>t+x.rest,0))}</b></div>`:''}`;
+  return `<div class="tbl-wrap debt-scroll"><table class="tbl pp-tbl tbl-m" style="min-width:0"><thead><tr><th>Aksi</th><th style="text-align:left">Ket</th><th>Rp</th><th>Tgl</th><th>Sisa</th></tr></thead><tbody>${DS.length?DS.map(x=>`<tr><td class="tbl-act"><button type="button" class="btn sm primary" data-act="debt-pay" data-src="${x.src}" data-id="${esc(x.id)}">Bayar</button></td><td data-l="Keterangan"><button type="button" class="link no-link" data-act="jrn-open"${x.src==='a'?' data-k="a"':''} data-id="${esc(x.id)}"><b>${esc(x.desc||coaNameOnly(x.acc))}</b></button></td><td class="num nowrap" data-l="Nominal"><span><b>${rp(x.rest)}</b>${x.paid>0?`<div class="muted">dari ${rp(x.amt)}</div>`:''}</span></td><td class="nowrap debt-dt" data-l="Jatuh tempo" data-src="${x.src}" data-id="${esc(x.id)}" title="Klik 2x untuk ubah tanggal" style="cursor:pointer">${fmtDate(x.due)}</td><td data-l="Sisa waktu"><b class="${x.left<=3?'neg':''}">${x.left>0?'H-'+x.left:x.left===0?'Hari ini':'Lewat '+(-x.left)+' hari'}</b></td></tr>`).join(''):`<tr><td colspan="5" class="muted tbl-empty" style="text-align:center;padding:22px 12px">${S.debtQ?'Tidak ada hasil untuk pencarian ini.':'Tidak ada pengingat hutang.'}</td></tr>`}</tbody></table></div>${pager}${DA.length?`<div class="debt-total"><span>${S.debtQ?'Total hasil pencarian':'Total hutang'}</span><b class="num">${rp(DA.reduce((t,x)=>t+x.rest,0))}</b></div>`:''}`;
 }
 function refreshDebtList(){const b=$('#debtBody');if(b)b.innerHTML=debtTableHTML()}
 
@@ -2013,7 +2056,7 @@ function bsPdfLogo(url){
 }
 /* Susunan baris laporan (mengikuti urutan & isi neraca di layar) */
 function bsPdfOps(r,rPrev){
-  const ops=[],nm=a=>(a.code?a.code+'  ':'')+a.name,isLR=n=>!n.hdr&&n.rows[0]&&n.rows[0].acc.code==='LR';
+  const ops=[],nm=a=>a.name,isLR=n=>!n.hdr&&n.rows[0]&&n.rows[0].acc.code==='LR';
   const isContra=a=>{const k=bsClass(a);return !!(k&&k.contra)};
   const emit=(pref,gk,nodes,abs)=>{
     const v=x=>abs?Math.abs(x):x;
@@ -2130,7 +2173,7 @@ async function bsPdf(btn){
 }
 /* ---------- Unduh Laba Rugi (PDF) ---------- */
 function plPdfOps(r){
-  const ops=[],nm=a=>(a.code?a.code+'  ':'')+a.name,rid=q=>'a'+(q.acc.code||q.acc.name);
+  const ops=[],nm=a=>a.name,rid=q=>'a'+(q.acc.code||q.acc.name);
   const emit=(gk,nodes)=>{
     ordBy('pl|'+gk,nodes,n=>n.hdr?'h'+n.hdr.id:rid(n.rows[0])).forEach(n=>{
       if(!n.hdr){const q=n.rows[0];ops.push({t:'single',text:nm(q.acc),v:q.v});return}
@@ -2406,8 +2449,8 @@ function plcChart(rows,series,opt){
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(opt.label||'Grafik perbandingan periode')}" class="chart plc-chart">${g}</svg>`;
 }
 /* rincian per akun: tiap komponen jadi baris judul (total) lalu akun-akun di bawahnya; kolom = periode */
-function plcAccRows(rows){
-  const cell=v=>Math.abs(v)<.5?'<span class="muted">–</span>':rp(v);
+function plcAccRows(rows,fmt){
+  const cell=v=>Math.abs(v)<.5?'<span class="muted">–</span>':(fmt?fmt(v):rp(v));
   const SEC=[['Pendapatan',['pendapatan','pendLain'],'inc'],['Beban HPP',['hpp'],'hpp'],['Beban Operasional',['beban'],'opx'],['Beban Lain-lain',['bebanLain'],'bl']];
   return SEC.map(([t,gs,tk])=>{
     const m=new Map();
@@ -2427,15 +2470,19 @@ function plcHTML(){
   const has=rows.some(x=>Math.abs(x.inc)>=.5||Math.abs(x.out)>=.5);
   const ctl=`<div class="bs-filter"><label class="f bs-sel"><span>Tipe periode</span><select id="plcType" aria-label="Tipe periode perbandingan">${PLC_TYPES.map(x=>`<option value="${x[0]}"${x[0]===C.type?' selected':''}>${x[1]}</option>`).join('')}</select></label><label class="f bs-date"><span>Jumlah periode ke belakang</span><input type="number" id="plcN" inputmode="numeric" min="2" max="${d[2]}" step="1" value="${C.n}" aria-label="Jumlah periode ke belakang"></label></div>`;
   const neg=v=>v<0?'neg':'',unit=['hari','minggu','bulan','tahun'][PLC_TYPES.findIndex(x=>x[0]===C.type)];
+  /* layar HP: tabel dibuat muat satu layar (tanpa geser) dengan angka diringkas bila kolom sempit */
+  const vw=window.innerWidth||1024,avail=(Math.min(vw,760)-62)*.72/Math.max(1,rows.length),FIT=vw<=640&&avail>=54,FULL=FIT&&avail>=84;
+  const fmtM=v=>{const a=Math.abs(v),sg=v<0?'-':'';return a>=1e9?sg+(a/1e9).toFixed(2).replace('.',',')+' M':a>=1e6?sg+(a/1e6).toFixed(1).replace('.',',')+' jt':rpn(v)};
+  const fmt=FIT?(FULL?rpn:fmtM):rp,hd=x=>FIT?(C.type==='month'?x.col.replace(/ 20(\d\d)$/,' $1'):x.lb):x.col,fc=FIT?' plc-fit':'',unitNote=FIT?(FULL?' (Rp)':''):'';
   let body,extra='';
   if(!has)body=`<p class="muted" style="margin:6px 0 0">Belum ada data laba rugi pada ${C.n} ${unit} terakhir.</p>`;
   else{
     body=`<div class="plc-h" style="margin-top:4px"><b>Pendapatan vs Beban</b><div class="legend"><span><i class="cm-in" style="background:var(--primary)"></i>Pendapatan</span><span><i style="background:#F2B544"></i>Beban</span></div></div>
     ${plcChart(rows,[{k:'inc',cls:'cm-in'},{k:'out',cls:'cm-out'}],{h:200,label:'Grafik pendapatan dan beban per periode'})}`;
     extra=`<section class="panel plc-panel" aria-label="Rekap per komponen"><div class="panel-head"><h2>Rekap per komponen</h2></div>
-    <div class="tbl-wrap"><table class="tbl plc-tbl plc-comp" style="min-width:${150+rows.length*118}px"><thead><tr><th>Komponen</th>${rows.map(x=>`<th class="r">${esc(x.col)}</th>`).join('')}</tr></thead><tbody>${[['Pendapatan','inc'],['Beban HPP','hpp'],['Beban Operasional','opx'],['Beban Lain-lain','bl']].map(([t,k])=>`<tr><td>${t}</td>${rows.map(x=>`<td class="r num">${rp(x[k])}</td>`).join('')}</tr>`).join('')}</tbody></table></div></section>
+    <div class="tbl-wrap"><table class="tbl plc-tbl plc-comp${fc}" style="min-width:${FIT?0:150+rows.length*118}px"><thead><tr><th>Komponen${unitNote}</th>${rows.map(x=>`<th class="r">${esc(hd(x))}</th>`).join('')}</tr></thead><tbody>${[['Pendapatan','inc'],['Beban HPP','hpp'],['Beban Operasional','opx'],['Beban Lain-lain','bl']].map(([t,k])=>`<tr><td>${t}</td>${rows.map(x=>`<td class="r num">${fmt(x[k])}</td>`).join('')}</tr>`).join('')}</tbody></table></div></section>
     <section class="panel plc-panel" aria-label="Rincian per akun"><div class="panel-head"><h2>Rincian per akun</h2></div>
-    <div class="tbl-wrap"><table class="tbl plc-tbl plc-comp plc-acc" style="min-width:${230+rows.length*118}px"><thead><tr><th>Akun</th>${rows.map(x=>`<th class="r">${esc(x.col)}</th>`).join('')}</tr></thead><tbody>${plcAccRows(rows)}</tbody></table></div></section>`;
+    <div class="tbl-wrap"><table class="tbl plc-tbl plc-comp plc-acc${fc}" style="min-width:${FIT?0:230+rows.length*118}px"><thead><tr><th>Akun${unitNote}</th>${rows.map(x=>`<th class="r">${esc(hd(x))}</th>`).join('')}</tr></thead><tbody>${plcAccRows(rows,FIT?fmt:null)}</tbody></table></div></section>`;
   }
   return `<div class="plc-wrap"><section class="panel plc-panel" aria-label="Bandingkan periode"><div class="panel-head"><h2>Bandingkan periode</h2></div>${ctl}${body}</section>${extra}</div>`;
 }
@@ -2650,7 +2697,7 @@ function bukuBesarView(){
     +(mode==='custom'?`<label class="f bs-date"><span>Dari tanggal</span><input type="date" id="glFrom" max="${today()}" value="${esc(from)}"></label><label class="f bs-date"><span>Sampai tanggal</span><input type="date" id="glTo" max="${today()}" value="${esc(to)}"></label>`:'')
     +`<label class="f bs-sel gl-acc"><span>Akun</span><select id="glAcc" aria-label="Pilih akun buku besar"><option value="">Semua akun</option>${accs.map(a=>`<option value="${esc(a.code)}"${a.code===S.gl.acc?' selected':''}>${esc(a.code)} · ${esc(a.name)}</option>`).join('')}</select></label><button type="button" class="btn sm bs-dl gl-pdf" data-act="gl-pdf" title="Unduh buku besar sebagai PDF">${ico('download',16)}Unduh PDF</button></div>`;
   return `${filter}<p class="pl-per" style="margin:0 0 14px">${from===to?esc(dmy(from)):esc(dmy(from))+' – '+esc(dmy(to))}</p>
-  <section class="panel" role="tabpanel"><div class="tools"><label class="search">${ico('search',18)}<input id="glSearch" type="search" placeholder="Cari transaksi atau akun" value="${esc(S.gl.q)}" autocomplete="off"></label></div><div id="glBody" style="margin-top:14px">${glBodyHTML()}</div></section>`;
+  <section class="panel gl-panel" role="tabpanel"><div class="tools"><label class="search">${ico('search',18)}<input id="glSearch" type="search" placeholder="Cari transaksi atau akun" value="${esc(S.gl.q)}" autocomplete="off"></label></div><div id="glBody" style="margin-top:14px">${glBodyHTML()}</div></section>`;
 }
 /* ---------- Arus Kas (metode langsung) ---------- */
 const CF_PERIODS=[['today','Hari ini'],['month','Bulan ini'],['lastmonth','Bulan lalu'],['year','Tahun ini'],['lastyear','Tahun lalu']];
@@ -2823,7 +2870,7 @@ function render(force){
   const loading=!(S.loaded.tx&&S.loaded.items&&S.loaded.cfg);
   v.innerHTML=(S.err?`<div class="alert">${esc(S.err)}</div>`:'')+(loading&&!S.err?'<div class="skel"><i></i><i></i><i></i></div>':VIEWS[S.page]());
   $('#topTitle').textContent=(NAV.find(n=>n[0]===S.page)||[])[1]||TITLES[S.page]||'';
-  syncTopH();plcFit();
+  syncTopH();plcFit();barFit();
   if(S.page==='jurnal'){const jf=$('form[data-form=general]',v);if(jf)jrnTotals(jf)}
   {const pf=$('form[data-form=profile]',v);if(pf)updateKop(pf)}
   document.querySelectorAll('[data-page]').forEach(b=>{if(b.dataset.act==='nav'){b.toggleAttribute('aria-current',b.dataset.page===S.page);if(b.dataset.page===S.page)b.setAttribute('aria-current','page')}});
