@@ -579,6 +579,15 @@ form[data-form=debtpay] .f>span{font-size:calc(12px*var(--fs))}
   .ri-tbl .rc-qty{width:100%!important;max-width:60px;padding:0 4px!important;height:34px!important}
   .ri-tbl tr{position:relative}
   .tbl-wrap:has(.ri-tbl){overflow:visible}
+  /* Bahan produk di HP: 2 baris per bahan. Baris 1 = nama bahan (lebar penuh), baris 2 = qty, satuan, total harga, hapus */
+  .ri-tbl,.ri-tbl tbody{display:block;width:100%}
+  .ri-tbl thead{display:none}
+  .ri-tbl tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.7fr) minmax(0,1.2fr) 40px;gap:8px 6px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+  .ri-tbl td{display:block;width:auto!important;padding:0!important;border:0!important;min-width:0}
+  .ri-tbl td:nth-child(1){grid-column:1/-1;text-align:left;font-size:calc(14px*var(--fs))}
+  .ri-tbl td:nth-child(1) .cb-in{height:42px;width:100%}
+  .ri-tbl td:nth-child(5){display:flex;justify-content:center}
+  .ri-tbl .rc-qty{max-width:none!important;height:40px!important;padding:0 8px!important}
   .ri-tbl .cb-list.inl{position:absolute!important;left:0!important;right:0!important;top:100%!important;width:auto!important;max-height:min(260px,40vh)!important;z-index:30;margin-top:4px;box-shadow:0 8px 24px rgba(0,0,0,.15)}
   .iv-tbl th:nth-child(1),.iv-tbl td:nth-child(1){width:30%}
   .iv-tbl th:nth-child(2),.iv-tbl td:nth-child(2){width:12%}
@@ -4265,7 +4274,7 @@ const rcRefresh=a=>(a||[]).map(x=>{
 function rcIngHTML(){
   if(!(S.rcIngs||[]).length)S.rcIngs=[{pending:true}];
   const L=S.rcIngs;
-  const rows=L.map((x,i)=>`<tr><td data-l="Nama Bahan">${x.id?`<b>${esc(x.name||'-')}</b>`:cbField('rcAdd','Pilih bahan').replace('data-cb="rcAdd"','data-cb="rcAdd" data-i="'+i+'"').replace('<span>Pilih bahan</span>','').replace('class="f"','class="f" style="margin:0;min-width:200px"')}</td><td class="c nowrap" data-l="Qty"><input type="number" step="any" min="0" class="rc-qty" data-i="${i}"${x.id?'':' disabled'} inputmode="decimal" value="${x.qty??''}" aria-label="Qty" style="width:96px;height:38px;padding:0 8px;text-align:center;border:1.5px solid var(--line);border-radius:10px;font:inherit;background:var(--card,#fff);color:inherit"></td><td class="c nowrap" data-l="Satuan">${esc(x.unit||'-')}</td><td class="c nowrap" data-l="Total Harga" id="rcRowT${i}">${rp(rcRowTotal(x))}</td><td class="c" data-l="Hapus"><button type="button" class="icon-btn" data-act="rc-ing-del" data-i="${i}" aria-label="Hapus bahan" title="Hapus">${ico('trash',18)}</button></td></tr>`).join('');
+  const rows=L.map((x,i)=>`<tr><td data-l="Nama Bahan">${x.id?`<b>${esc(x.name||'-')}</b>`:cbField('rcAdd','Pilih bahan').replace('data-cb="rcAdd"','data-cb="rcAdd" data-i="'+i+'"').replace('<span>Pilih bahan</span>','').replace('class="f"','class="f" style="margin:0;min-width:200px"')}</td><td class="c nowrap" data-l="Qty"><input type="number" step="any" min="0" class="rc-qty" data-i="${i}"${x.id?'':' disabled'} inputmode="decimal" placeholder="Qty" value="${x.qty??''}" aria-label="Qty" style="width:96px;height:38px;padding:0 8px;text-align:center;border:1.5px solid var(--line);border-radius:10px;font:inherit;background:var(--card,#fff);color:inherit"></td><td class="c nowrap" data-l="Satuan">${esc(x.unit||'-')}</td><td class="c nowrap" data-l="Total Harga" id="rcRowT${i}">${rp(rcRowTotal(x))}</td><td class="c" data-l="Hapus"><button type="button" class="icon-btn" data-act="rc-ing-del" data-i="${i}" aria-label="Hapus bahan" title="Hapus">${ico('trash',18)}</button></td></tr>`).join('');
   return `<div class="tbl-wrap"><table class="tbl rc-tbl ri-tbl" style="min-width:560px"><thead><tr><th>Nama Bahan</th><th class="c">Qty</th><th class="c">Satuan</th><th class="c">Total Harga</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
 `;
 }
