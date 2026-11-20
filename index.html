@@ -5326,6 +5326,8 @@ const cbInline=box=>!!((box.closest('.sheet')||/^(mnAdd|rcAdd)$/.test(box.datase
 /* Daftar pilihan akun: posisi tetap di layar, tinggi mengikuti ruang tersedia (atas/bawah), selalu bisa di-scroll */
 function cbPlace(box){
   const list=$('.cb-list',box);if(!list||list.hidden)return;
+  /* Jenis resep: daftar menempel tepat di bawah kolom (bukan melayang di layar), jadi tidak menutupi kolomnya sendiri */
+  if(box.dataset.cb==='rcType'){list.classList.remove('inl');const st=list.style;st.position='absolute';st.left='0';st.right='0';st.width='auto';st.top='calc(100% + 4px)';st.bottom='auto';st.maxHeight='220px';return}
   if(cbInline(box)){list.classList.add('inl');return}
   list.classList.remove('inl');
   const r=$('.cb',box).getBoundingClientRect(),pair=box.closest('.acc-pair'),pr=pair?pair.getBoundingClientRect():r;
