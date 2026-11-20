@@ -569,7 +569,16 @@ form[data-form=debtpay] .f>span{font-size:calc(12px*var(--fs))}
   .rc-tbl td{padding:10px 3px;text-align:center;overflow-wrap:anywhere;white-space:normal!important}
   .rc-tbl td:first-child .rc-nm{font-size:inherit}
   .rc-tbl td[data-l]::before{display:none}
-  .inv-tbl:has(.rc-tbl){margin:0;overflow-x:hidden}
+  .inv-tbl:has(.rc-tbl){overflow:visible}
+  .iv-tbl th:nth-child(1),.iv-tbl td:nth-child(1){width:30%}
+  .iv-tbl th:nth-child(2),.iv-tbl td:nth-child(2){width:12%}
+  .iv-tbl th:nth-child(3),.iv-tbl td:nth-child(3){width:19%}
+  .iv-tbl th:nth-child(4),.iv-tbl td:nth-child(4){width:27%}
+  .iv-tbl th:nth-child(5),.iv-tbl td:nth-child(5){width:12%}
+  .iv-tbl td[data-l="Stok"]>span{gap:2px!important;flex-wrap:nowrap!important}
+  .iv-tbl td[data-l="Stok"] .opn{gap:2px}
+  .iv-tbl td[data-l="Stok"] b{min-width:26px!important}
+  .iv-tbl .opn-b{width:22px;height:26px;border-radius:7px;font-size:calc(15px*var(--fs))}
   .tbl.tbl-m{display:block;min-width:0!important;width:100%}
   .tbl-m thead,.tbl-m tbody{display:block}
   .tbl-m thead tr{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
@@ -653,6 +662,7 @@ form[data-form=debtpay] .f>span{font-size:calc(12px*var(--fs))}
 .opn{display:flex;align-items:center;gap:8px}
 .opn-b{display:grid;place-items:center;width:30px;height:30px;flex:none;border-radius:10px;background:var(--surface2);color:var(--primary-text);font-size:calc(18px*var(--fs));font-weight:800;line-height:1}
 .opn-b:hover{background:var(--primary-soft)}
+.f[data-cb=mnAdd]{scroll-margin-top:calc(var(--top-h,56px) + var(--tabs-h,62px) + 12px)}
 .mn-nav{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .mn-date{flex:1;text-align:center;min-width:0}
 .mn-date b{display:block;font-size:calc(15px*var(--fs))}
@@ -4176,7 +4186,7 @@ function invListHTML(){
   if(!S.items.length)return emptyBlock('box','Belum ada barang','Tambahkan barang untuk memantau stok dan nilai persediaan.',`<button class="btn primary sm" data-act="new-item">Tambah barang</button>`);
   if(!l.length)return emptyBlock('search','Barang tidak ditemukan','Coba kata kunci lain.');
   const th=(t,c)=>`<th${c?` class="${c}"`:''}>${t}</th>`;
-  return `<div class="tbl-wrap inv-tbl"><table class="tbl tbl-m" style="min-width:640px"><thead><tr>${th('Nama')}${th('Satuan','c')}${th('Harga Satuan','c')}${th('Stok','c')}${th('Stock Minimum','c')}</tr></thead><tbody>${l.map(i=>{const q=i.qty||0,mn=i.min||0;
+  return `<div class="tbl-wrap inv-tbl"><table class="tbl rc-tbl iv-tbl" style="min-width:640px"><thead><tr>${th('Nama')}${th('Satuan','c')}${th('Harga Satuan','c')}${th('Stok','c')}${th('Stock Minimum','c')}</tr></thead><tbody>${l.map(i=>{const q=i.qty||0,mn=i.min||0;
     const flag='';
     return `<tr><td data-l="Nama"><button type="button" class="link no-link itm-nm" style="white-space:normal;text-align:left" data-act="item-info" data-id="${esc(i.id)}" title="Klik untuk info barang · klik 2x untuk ganti nama"><b>${esc(i.name)}</b></button>${i.sku?`<small class="muted" style="display:block">${esc(i.sku)}</small>`:''}</td><td class="c nowrap itm-un" data-l="Satuan" data-id="${esc(i.id)}" title="Klik 2x untuk ganti satuan">${esc(i.unit||'-')}</td><td class="c nowrap" data-l="Harga Satuan">${rp(i.cost||0)}</td><td class="c nowrap" data-l="Stok"><span style="display:inline-flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap"><span class="opn"><button type="button" class="opn-b" data-act="stock-adj" data-id="${esc(i.id)}" data-d="-1" aria-label="Kurangi stok (stock opname)" title="Kurangi stok (stock opname)">\u2212</button><b class="num ${q<=0?'neg':''}" style="min-width:64px;text-align:center">${+q.toFixed(2)}</b><button type="button" class="opn-b" data-act="stock-adj" data-id="${esc(i.id)}" data-d="1" aria-label="Tambah stok (stock opname)" title="Tambah stok (stock opname)">+</button></span>${flag}</span></td><td class="c nowrap itm-mn" data-l="Stock Minimum" data-id="${esc(i.id)}" title="Klik 2x untuk ganti stok minimum">${+mn.toFixed(2)}</td></tr>`}).join('')}</tbody></table></div>`;
 }
@@ -5300,7 +5310,7 @@ function cbField(name,label,ph){
 /* kolom akun: daftar rekomendasi baru muncul setelah user mengetik */
 const CB_ACC=new Set(['jDebit','jCredit','jPrepaid','jAny','payCash','eExp','ePrepaid','pCredit','pInvAcc','pExpAcc','creditAcc','fixedAcc','accumAcc','expAcc']);
 /* HP + pop-up: daftar tampil di dalam alur form (bukan melayang), jadi tidak bisa tertutup keyboard atau bergeser */
-const cbInline=box=>!!(box.closest('.sheet')&&!box.classList.contains('jr-acc')&&window.matchMedia&&matchMedia('(pointer:coarse)').matches);
+const cbInline=box=>!!((box.closest('.sheet')||box.dataset.cb==='mnAdd')&&!box.classList.contains('jr-acc')&&window.matchMedia&&matchMedia('(pointer:coarse)').matches);
 /* Daftar pilihan akun: posisi tetap di layar, tinggi mengikuti ruang tersedia (atas/bawah), selalu bisa di-scroll */
 function cbPlace(box){
   const list=$('.cb-list',box);if(!list||list.hidden)return;
@@ -5318,6 +5328,7 @@ function cbPlace(box){
 }
 /* HP: geser kolom ke bagian atas pop-up supaya daftar punya ruang di bawahnya */
 function cbReveal(box){
+  if(box.dataset.cb==='mnAdd'){if(window.matchMedia&&matchMedia('(pointer:coarse)').matches)box.scrollIntoView({block:'start',behavior:'smooth'});return}
   const sh=box.closest('.sheet');if(!sh||!(window.matchMedia&&matchMedia('(pointer:coarse)').matches))return;
   const hd=$('.sheet-head',sh),r=$('.cb',box).getBoundingClientRect(),sr=sh.getBoundingClientRect();
   const d=r.top-(sr.top+(hd?hd.offsetHeight:0)+8);
