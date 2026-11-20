@@ -224,7 +224,7 @@ small{font-size:calc(12.5px*var(--fs));color:var(--muted)}
 .search{position:relative;flex:1;min-width:150px}
 .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted)}
 .search input{width:100%;height:44px;padding:0 14px 0 40px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-size:max(16px,calc(16px*var(--fs)))}
-#invSearch{height:38px}
+#invSearch,#rcSearch{height:38px}
 .search input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
 .select{height:44px;padding:0 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-size:calc(15px*var(--fs));font-weight:600}
 .chips{display:flex;gap:8px;margin:12px 0 4px}
@@ -563,6 +563,13 @@ form[data-form=debtpay] .f>span{font-size:calc(12px*var(--fs))}
 /* tabel riwayat (aset, pembelian, biaya, jurnal umum): di layar HP tampil sebagai kartu agar muat tanpa geser horizontal */
 @media(max-width:640px){
   .ast-wrap.wrap-m{max-height:none;overflow:visible;margin:0}
+  .tbl.rc-tbl{min-width:0!important;width:100%;table-layout:fixed;font-size:calc(11px*var(--fs))}
+  .rc-tbl th{white-space:normal;padding:8px 3px;font-size:calc(10.5px*var(--fs));text-align:center;line-height:1.25;vertical-align:bottom}
+  .rc-tbl th:first-child,.rc-tbl td:first-child{text-align:left;width:26%;padding-left:6px}
+  .rc-tbl td{padding:10px 3px;text-align:center;overflow-wrap:anywhere;white-space:normal!important}
+  .rc-tbl td:first-child .rc-nm{font-size:inherit}
+  .rc-tbl td[data-l]::before{display:none}
+  .inv-tbl:has(.rc-tbl){margin:0;overflow-x:hidden}
   .tbl.tbl-m{display:block;min-width:0!important;width:100%}
   .tbl-m thead,.tbl-m tbody{display:block}
   .tbl-m thead tr{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
@@ -1264,11 +1271,11 @@ function viewDashboard(){
         <div id="debtBody">${debtTableHTML()}</div></section>
     </div>
     <div class="grid">
-      <section class="panel"><div class="panel-head"><h2>Stok Minimum</h2>${low.length?`<button class="link" data-act="nav" data-page="inventory">Buka</button>`:''}</div>
+      <section class="panel"><div class="panel-head"><h2>Stok Minimum</h2></div>
         <div id="lowBody">${lowStockHTML()}</div></section>
-      <section class="panel"><div class="panel-head"><h2>Segera Kadaluwarsa</h2>${expAll.length?`<button class="link" data-act="nav" data-page="inventory">Buka</button>`:''}</div>
+      <section class="panel"><div class="panel-head"><h2>Segera Kadaluwarsa</h2></div>
         <div id="expBody">${expiryHTML()}</div></section>
-      <section class="panel"><div class="panel-head"><h2>Biaya Dibayar di Muka</h2>${prepaidAll.length?`<button class="link" data-act="nav" data-page="biaya">Buka</button>`:''}</div>
+      <section class="panel"><div class="panel-head"><h2>Biaya Dibayar di Muka</h2></div>
         <div id="ppBody">${prepaidHTML()}</div></section>
       <section class="panel"><div class="panel-head"><h2>Transaksi terbaru</h2><div class="f" style="margin:0;width:176px"><div class="date-wrap"><input id="recDate" class="dtx" inputmode="numeric" autocomplete="off" maxlength="10" aria-label="Tanggal transaksi (dd/mm/yyyy)" value="${dmy(S.recDate||today())}"><button type="button" class="date-btn" data-act="pick-date" aria-label="Pilih dari kalender">${ico('calendar',20)}</button><input type="date" class="date-native" value="${esc(S.recDate||today())}" tabindex="-1" aria-hidden="true"></div></div></div>
         <div id="recList">${recListHTML()}</div></section>
@@ -4192,10 +4199,13 @@ const rcTypes=()=>[...new Set(RC_TYPES.concat((S.cfg&&S.cfg.rcTypes)||[]).concat
 const rcTime=m=>{m=Math.max(0,Math.round(+m||0));if(!m)return '-';const h=Math.floor(m/60),n=m%60;return (h?h+' jam':'')+(h&&n?' ':'')+(n?n+' mnt':'')};
 const rcPer=r=>(+r.portions>0)?Math.round((+r.total||0)/(+r.portions)):0;
 function recipeListHTML(){
-  const l=[...S.recipes].sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  const q=(S.rcQ||'').trim().toLowerCase();
+  let l=[...S.recipes].sort((a,b)=>(a.name||'').localeCompare(b.name||''));
   if(!l.length)return emptyBlock('recipe','Belum ada resep','Catat menu, jumlah porsi, harga bahan, dan waktu pembuatannya.');
+  if(q)l=l.filter(r=>((r.name||'')+' '+(r.type||'')).toLowerCase().includes(q));
+  if(!l.length)return emptyBlock('search','Resep tidak ditemukan','Coba kata kunci lain.');
   const th=(t,c)=>`<th${c?` class="${c}"`:''}>${t}</th>`;
-  return `<div class="tbl-wrap inv-tbl"><table class="tbl tbl-m" style="min-width:720px"><thead><tr>${th('Nama Menu')}${th('Jenis Resep','c')}${th('Porsi','c')}${th('Total Harga Bahan','c')}${th('Harga Per Porsi','c')}${th('Total Waktu','c')}</tr></thead><tbody>${l.map(r=>`<tr><td data-l="Nama Menu"><button type="button" class="link no-link rc-nm" style="white-space:normal;text-align:left" data-act="recipe-info" data-id="${esc(r.id)}" title="Klik 1x untuk info resep, klik 2x untuk mengubah"><b>${esc(r.name||'-')}</b></button></td><td class="c nowrap" data-l="Jenis Resep">${esc(r.type||'-')}</td><td class="c nowrap" data-l="Porsi">${+(+r.portions||0).toFixed(2)}</td><td class="c nowrap" data-l="Total Harga Bahan">${rp(+r.total||0)}</td><td class="c nowrap" data-l="Harga Per Porsi">${rp(rcPer(r))}</td><td class="c nowrap" data-l="Total Waktu">${esc(rcTime(r.minutes))}</td></tr>`).join('')}</tbody></table></div>`;
+  return `<div class="tbl-wrap inv-tbl"><table class="tbl rc-tbl" style="min-width:720px"><thead><tr>${th('Nama Menu')}${th('Jenis Resep','c')}${th('Porsi','c')}${th('Total Harga Bahan','c')}${th('Harga Per Porsi','c')}${th('Total Waktu','c')}</tr></thead><tbody>${l.map(r=>`<tr><td data-l="Nama Menu"><button type="button" class="link no-link rc-nm" style="white-space:normal;text-align:left" data-act="recipe-info" data-id="${esc(r.id)}" title="Klik 1x untuk info resep, klik 2x untuk mengubah"><b>${esc(r.name||'-')}</b></button></td><td class="c nowrap" data-l="Jenis Resep">${esc(r.type||'-')}</td><td class="c nowrap" data-l="Porsi">${+(+r.portions||0).toFixed(2)}</td><td class="c nowrap" data-l="Total Harga Bahan">${rp(+r.total||0)}</td><td class="c nowrap" data-l="Harga Per Porsi">${rp(rcPer(r))}</td><td class="c nowrap" data-l="Total Waktu">${esc(rcTime(r.minutes))}</td></tr>`).join('')}</tbody></table></div>`;
 }
 /* klik 1x nama resep -> pop up info ringkas (hanya baca, tanpa fitur ubah); klik 2x -> form ubah resep */
 function recipeInfoOpen(id){
@@ -4215,7 +4225,7 @@ function recipeInfoOpen(id){
 }
 function recipeView(){
   if(S.rcEdit)return recipeFormPage();
-  return `<section class="panel" role="tabpanel" aria-label="Resep"><div class="tools" style="justify-content:flex-end"><button class="btn primary sm" data-act="new-recipe">${ico('plus',16)}Resep</button></div><div id="rcList" style="margin-top:6px">${recipeListHTML()}</div></section>`;
+  return `<section class="panel" role="tabpanel" aria-label="Resep"><div class="tools"><label class="search">${ico('search',18)}<input id="rcSearch" type="search" autocomplete="off" aria-label="Cari resep" title="Cari nama atau jenis resep" value="${esc(S.rcQ||'')}"></label><button class="btn primary sm" style="margin-left:auto" data-act="new-recipe">${ico('plus',16)}Resep</button></div><div id="rcList" style="margin-top:6px">${recipeListHTML()}</div></section>`;
 }
 /* ---- Bahan produk (bahan dari Persediaan + Sub-Resep) ---- */
 const rcQty=x=>parseFloat(x.qty)||0;
@@ -6048,6 +6058,7 @@ document.addEventListener('input',e=>{
   if(t.id==='buySearch'){S.buyQ=t.value;S.buyLimit=50;refreshBuyList()}
   if(t.id==='expSearch'){S.expQ=t.value;S.expLimit=50;refreshExpList()}
   if(t.id==='debtSearch'){S.debtQ=t.value;S.debtPage=0;refreshDebtList()}
+  if(t.id==='rcSearch'){S.rcQ=t.value;$('#rcList').innerHTML=recipeListHTML();return}
   if(t.id==='invSearch'){S.inv.q=t.value;$('#invList').innerHTML=invListHTML()}
   if(t.id==='glSearch'){S.gl.q=t.value;const b=$('#glBody');if(b)b.innerHTML=glBodyHTML()}
 });
