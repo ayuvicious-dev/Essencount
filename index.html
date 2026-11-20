@@ -570,6 +570,16 @@ form[data-form=debtpay] .f>span{font-size:calc(12px*var(--fs))}
   .rc-tbl td:first-child .rc-nm{font-size:inherit}
   .rc-tbl td[data-l]::before{display:none}
   .inv-tbl:has(.rc-tbl){overflow:visible}
+  .ri-tbl th:nth-child(1),.ri-tbl td:nth-child(1){width:34%}
+  .ri-tbl th:nth-child(2),.ri-tbl td:nth-child(2){width:21%}
+  .ri-tbl th:nth-child(3),.ri-tbl td:nth-child(3){width:13%}
+  .ri-tbl th:nth-child(4),.ri-tbl td:nth-child(4){width:20%}
+  .ri-tbl th:nth-child(5),.ri-tbl td:nth-child(5){width:12%}
+  .ri-tbl .f{min-width:0!important;margin:0!important}
+  .ri-tbl .rc-qty{width:100%!important;max-width:60px;padding:0 4px!important;height:34px!important}
+  .ri-tbl tr{position:relative}
+  .tbl-wrap:has(.ri-tbl){overflow:visible}
+  .ri-tbl .cb-list.inl{position:absolute!important;left:0!important;right:0!important;top:100%!important;width:auto!important;max-height:min(260px,40vh)!important;z-index:30;margin-top:4px;box-shadow:0 8px 24px rgba(0,0,0,.15)}
   .iv-tbl th:nth-child(1),.iv-tbl td:nth-child(1){width:30%}
   .iv-tbl th:nth-child(2),.iv-tbl td:nth-child(2){width:12%}
   .iv-tbl th:nth-child(3),.iv-tbl td:nth-child(3){width:19%}
@@ -662,7 +672,7 @@ form[data-form=debtpay] .f>span{font-size:calc(12px*var(--fs))}
 .opn{display:flex;align-items:center;gap:8px}
 .opn-b{display:grid;place-items:center;width:30px;height:30px;flex:none;border-radius:10px;background:var(--surface2);color:var(--primary-text);font-size:calc(18px*var(--fs));font-weight:800;line-height:1}
 .opn-b:hover{background:var(--primary-soft)}
-.f[data-cb=mnAdd]{scroll-margin-top:calc(var(--top-h,56px) + var(--tabs-h,62px) + 12px)}
+.f[data-cb=mnAdd],.f[data-cb=rcAdd]{scroll-margin-top:calc(var(--top-h,56px) + var(--tabs-h,62px) + 12px)}
 .mn-nav{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .mn-date{flex:1;text-align:center;min-width:0}
 .mn-date b{display:block;font-size:calc(15px*var(--fs))}
@@ -4254,7 +4264,7 @@ function rcIngHTML(){
   if(!(S.rcIngs||[]).length)S.rcIngs=[{pending:true}];
   const L=S.rcIngs;
   const rows=L.map((x,i)=>`<tr><td data-l="Nama Bahan">${x.id?`<b>${esc(x.name||'-')}</b>`:cbField('rcAdd','Pilih bahan').replace('data-cb="rcAdd"','data-cb="rcAdd" data-i="'+i+'"').replace('<span>Pilih bahan</span>','').replace('class="f"','class="f" style="margin:0;min-width:200px"')}</td><td class="c nowrap" data-l="Qty"><input type="number" step="any" min="0" class="rc-qty" data-i="${i}"${x.id?'':' disabled'} inputmode="decimal" value="${x.qty??''}" aria-label="Qty" style="width:96px;height:38px;padding:0 8px;text-align:center;border:1.5px solid var(--line);border-radius:10px;font:inherit;background:var(--card,#fff);color:inherit"></td><td class="c nowrap" data-l="Satuan">${esc(x.unit||'-')}</td><td class="c nowrap" data-l="Total Harga" id="rcRowT${i}">${rp(rcRowTotal(x))}</td><td class="c" data-l="Hapus"><button type="button" class="icon-btn" data-act="rc-ing-del" data-i="${i}" aria-label="Hapus bahan" title="Hapus">${ico('trash',18)}</button></td></tr>`).join('');
-  return `<div class="tbl-wrap"><table class="tbl tbl-m" style="min-width:560px"><thead><tr><th>Nama Bahan</th><th class="c">Qty</th><th class="c">Satuan</th><th class="c">Total Harga</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+  return `<div class="tbl-wrap"><table class="tbl rc-tbl ri-tbl" style="min-width:560px"><thead><tr><th>Nama Bahan</th><th class="c">Qty</th><th class="c">Satuan</th><th class="c">Total Harga</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
 `;
 }
 function rcCalc(f){
@@ -4417,7 +4427,7 @@ const mnLong=d=>new Date(d+'T00:00:00').toLocaleDateString('id-ID',{weekday:'lon
 const mnRef=m=>m.kind==='r'?S.recipes.find(r=>r.id===m.refId):S.items.find(i=>i.id===m.refId);
 function mnCost(m){const x=mnRef(m);if(!x)return 0;const q=+m.qty||0;return m.kind==='r'?rcPer(x)*q:Math.round((+x.cost||0)*q)}
 /* produk persediaan hasil sub-resep -> resep asalnya (untuk rincian bahan & langkah) */
-function mnSubRecipe(m){const x=m.kind==='b'?mnRef(m):null;if(!x)return null;return S.recipes.find(r=>r.id===x.recipeId||('rc_'+r.id)===x.id)||null}
+function mnSubRecipe(m){if(m.kind==='r')return mnRef(m)||null;const x=mnRef(m);if(!x)return null;return S.recipes.find(r=>r.id===x.recipeId||('rc_'+r.id)===x.id)||null}
 function mnDetailHTML(m,r){
   const done=new Set(m.sub||[]),pq=+r.portions>0?+r.portions:1,k=(+m.qty||0)/pq;
   const ings=rcRefresh(r.ings||[]).filter(x=>x.id),steps=(r.steps||[]).filter(x=>String(x.text||'').trim());
@@ -5273,8 +5283,8 @@ function cbOptions(name){
   }
   if(name==='rcAdd'){
     const ub=new Set((S.rcIngs||[]).filter(x=>x.t==='b').map(x=>x.id)),us=new Set((S.rcIngs||[]).filter(x=>x.t==='s').map(x=>x.id));
-    const A=S.items.filter(i=>!ub.has(i.id)).map(i=>({v:'b:'+i.id,l:i.name||'-',sub:i.unit||''}));
-    const B=S.recipes.filter(r=>r.id!==S.rcEdit&&!us.has(r.id)&&!(r.ings||[]).some(x=>x.t==='s'&&x.id===S.rcEdit)).map(r=>({v:'s:'+r.id,l:r.name||'-',sub:'Sub-Resep'}));
+    const A=S.items.filter(i=>!ub.has(i.id)).map(i=>({v:'b:'+i.id,l:i.name||'-',sub:'Persediaan'+(i.unit?' · '+i.unit:'')}));
+    const B=S.recipes.filter(r=>r.id!==S.rcEdit&&!us.has(r.id)&&!(r.ings||[]).some(x=>x.t==='s'&&x.id===S.rcEdit)).map(r=>({v:'s:'+r.id,l:r.name||'-',sub:'Resep'}));
     return [...A,...B].sort((a,b)=>(a.l||'').localeCompare(b.l||''));
   }
   if(name==='rcBahan'){const used=new Set((S.rcIngs||[]).filter(x=>x.t==='b').map(x=>x.id));return S.items.filter(i=>!used.has(i.id)).sort((a,b)=>(a.name||'').localeCompare(b.name||'')).map(i=>({v:i.id,l:i.name||'-',sub:i.unit||''}))}
@@ -5310,7 +5320,7 @@ function cbField(name,label,ph){
 /* kolom akun: daftar rekomendasi baru muncul setelah user mengetik */
 const CB_ACC=new Set(['jDebit','jCredit','jPrepaid','jAny','payCash','eExp','ePrepaid','pCredit','pInvAcc','pExpAcc','creditAcc','fixedAcc','accumAcc','expAcc']);
 /* HP + pop-up: daftar tampil di dalam alur form (bukan melayang), jadi tidak bisa tertutup keyboard atau bergeser */
-const cbInline=box=>!!((box.closest('.sheet')||box.dataset.cb==='mnAdd')&&!box.classList.contains('jr-acc')&&window.matchMedia&&matchMedia('(pointer:coarse)').matches);
+const cbInline=box=>!!((box.closest('.sheet')||/^(mnAdd|rcAdd)$/.test(box.dataset.cb))&&!box.classList.contains('jr-acc')&&window.matchMedia&&matchMedia('(pointer:coarse)').matches);
 /* Daftar pilihan akun: posisi tetap di layar, tinggi mengikuti ruang tersedia (atas/bawah), selalu bisa di-scroll */
 function cbPlace(box){
   const list=$('.cb-list',box);if(!list||list.hidden)return;
@@ -5328,7 +5338,7 @@ function cbPlace(box){
 }
 /* HP: geser kolom ke bagian atas pop-up supaya daftar punya ruang di bawahnya */
 function cbReveal(box){
-  if(box.dataset.cb==='mnAdd'){if(window.matchMedia&&matchMedia('(pointer:coarse)').matches)box.scrollIntoView({block:'start',behavior:'smooth'});return}
+  if(/^(mnAdd|rcAdd)$/.test(box.dataset.cb)){if(window.matchMedia&&matchMedia('(pointer:coarse)').matches&&(box._rvN=(box._rvN||0)+1)<=2)box.scrollIntoView({block:'start',behavior:'auto'});return}
   const sh=box.closest('.sheet');if(!sh||!(window.matchMedia&&matchMedia('(pointer:coarse)').matches))return;
   const hd=$('.sheet-head',sh),r=$('.cb',box).getBoundingClientRect(),sr=sh.getBoundingClientRect();
   const d=r.top-(sr.top+(hd?hd.offsetHeight:0)+8);
@@ -5369,7 +5379,7 @@ function cbShow(box,q){
   if(opening){const on=$('.cb-opt.on',list);if(on)list.scrollTop=Math.max(0,on.offsetTop-list.clientHeight/2+on.offsetHeight/2)}
   $('.cb-in',box).setAttribute('aria-expanded','true');
 }
-function cbHide(box){$('.cb-list',box).hidden=true;$('.cb-in',box).setAttribute('aria-expanded','false')}
+function cbHide(box){box._rvN=0;$('.cb-list',box).hidden=true;$('.cb-in',box).setAttribute('aria-expanded','false')}
 function cbPick(box,v,label,user=true){
   $('input[type=hidden]',box).value=v;$('.cb-in',box).value=label;cbHide(box);
   if(user)box.dataset.touched='1';
