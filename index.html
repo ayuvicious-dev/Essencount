@@ -920,6 +920,8 @@ form[data-form=recipe] .rc-ing h3{font-size:calc(14px*var(--fs))}
 /* layar stabil saat mengetik di HP: tanpa auto zoom in/out */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @media (pointer:coarse){input,select,textarea,.cb-in{font-size:max(16px,calc(16px*var(--fs)))!important}}
+/* form resep di HP: isian seragam berhuruf kecil agar tidak terpotong (zoom otomatis sudah dicegah oleh viewport maximum-scale=1) */
+@media (pointer:coarse){form[data-form=recipe] input,form[data-form=recipe] select,form[data-form=recipe] .cb-in{font-size:calc(13px*var(--fs))!important}}
 </style>
 </head>
 <body>
