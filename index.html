@@ -610,6 +610,19 @@ form[data-form=debtpay] .f>span{font-size:calc(12px*var(--fs))}
   .tbl-m tbody td{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:8px 0;border-bottom:1px solid var(--line);text-align:right!important;white-space:normal!important;overflow-wrap:anywhere}
   .tbl-m tbody tr td:last-child{border-bottom:0}
   .tbl-m tbody td::before{content:attr(data-l);flex:none;max-width:42%;color:var(--muted);font-weight:600;text-align:left}
+  /* Langkah resep di HP: tetap berbentuk tabel seperti di desktop (bukan kartu) */
+  .tbl.tbl-m.rc-stbl{display:table;width:100%;table-layout:fixed}
+  .tbl.tbl-m.rc-stbl thead{display:table-header-group}
+  .tbl.tbl-m.rc-stbl tbody{display:table-row-group}
+  .tbl.tbl-m.rc-stbl thead tr,.tbl.tbl-m.rc-stbl tbody tr{display:table-row;border:0;border-radius:0;padding:0;margin:0;overflow:visible}
+  .tbl.tbl-m.rc-stbl thead th{display:table-cell;padding:8px 4px;text-align:left;white-space:normal;line-height:1.25}
+  .tbl.tbl-m.rc-stbl thead th:nth-child(2),.tbl.tbl-m.rc-stbl tbody td:nth-child(2){width:84px;text-align:center!important}
+  .tbl.tbl-m.rc-stbl thead th:nth-child(3),.tbl.tbl-m.rc-stbl tbody td:nth-child(3){width:44px;text-align:center!important}
+  .tbl.tbl-m.rc-stbl tbody td{display:table-cell;padding:8px 4px;border-bottom:1px solid var(--line);text-align:left!important;vertical-align:middle}
+  .tbl.tbl-m.rc-stbl tbody td::before{display:none}
+  .tbl.tbl-m.rc-stbl tbody tr td:last-child{border-bottom:1px solid var(--line)}
+  .tbl.tbl-m.rc-stbl input.rc-st{width:100%!important;min-width:0!important;box-sizing:border-box}
+  .tbl.tbl-m.rc-stbl td[colspan]{display:table-cell}
   .tbl-m tbody td.tbl-act{justify-content:flex-end;padding:4px 0}
   .tbl-m tbody td.tbl-act::before{display:none}
   .tbl-m tbody td.tbl-act:empty{display:none}
@@ -4304,7 +4317,7 @@ function rcStepHTML(){
   const L=S.rcSteps||[];
   const inp='height:38px;padding:0 8px;border:1.5px solid var(--line);border-radius:10px;font:inherit;background:var(--card,#fff);color:inherit';
   const rows=L.map((x,i)=>`<tr><td data-l="Langkah"><input type="text" class="rc-st" data-i="${i}" data-f="text" maxlength="200" autocomplete="off" value="${esc(x.text||'')}" aria-label="Langkah ${i+1}" style="width:100%;min-width:180px;${inp}"></td><td class="c nowrap" data-l="Waktu (menit)"><input type="number" step="any" min="0" class="rc-st" data-i="${i}" data-f="min" inputmode="decimal" value="${x.min??''}" placeholder="menit" aria-label="Waktu (menit)" style="width:96px;text-align:center;${inp}"></td><td class="c" data-l="Hapus"><button type="button" class="icon-btn" data-act="rc-step-del" data-i="${i}" aria-label="Hapus langkah">${ico('trash',18)}</button></td></tr>`).join('');
-  return `<div class="tbl-wrap"><table class="tbl tbl-m" style="min-width:420px"><thead><tr><th>Langkah</th><th class="c">Waktu (menit)</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="3" class="muted">Belum ada langkah.</td></tr>'}</tbody></table></div><div class="tools" style="margin-top:10px"><button type="button" class="btn sm" data-act="rc-step-add">${ico('plus',16)}Tambah langkah</button></div>`;
+  return `<div class="tbl-wrap"><table class="tbl tbl-m rc-stbl" style="min-width:420px"><thead><tr><th>Langkah</th><th class="c">Waktu (menit)</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="3" class="muted">Belum ada langkah.</td></tr>'}</tbody></table></div><div class="tools" style="margin-top:10px"><button type="button" class="btn sm" data-act="rc-step-add">${ico('plus',16)}Tambah langkah</button></div>`;
 }
 const rcStepMin=()=>(S.rcSteps||[]).reduce((a,x)=>a+(parseFloat(x.min)||0),0);
 function rcMinSync(){const o=$('#rcMin');if(o){const m=rcStepMin();o.value=m>0?+m.toFixed(2):''}}
