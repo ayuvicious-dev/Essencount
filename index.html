@@ -944,6 +944,25 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @media (pointer:coarse){input,select,textarea,.cb-in{font-size:max(16px,calc(16px*var(--fs)))!important}}
 /* form resep di HP: isian seragam berhuruf kecil agar tidak terpotong (zoom otomatis sudah dicegah oleh viewport maximum-scale=1) */
 @media (pointer:coarse){form[data-form=recipe] input,form[data-form=recipe] select,form[data-form=recipe] .cb-in{font-size:calc(13px*var(--fs))!important}}
+/* HP: daftar pilihan akun/barang melayang di bawah kolom, layout form tidak bergeser saat mengetik */
+.cb-list.ovl{position:absolute;z-index:70;margin:0;box-shadow:0 10px 28px rgba(14,26,51,.18)}
+.sheet{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.sheet form.compact .two{align-items:start}
+@media (pointer:coarse){.cb-list{overscroll-behavior:contain}}
+/* HP: isian form Pembelian, Barang baru, Aset, Jurnal umum, Biaya (dan form transaksi lain) berukuran 14px, seragam dengan teks lain agar tidak terpotong (zoom otomatis sudah dicegah oleh viewport maximum-scale=1) */
+@media (pointer:coarse),(max-width:720px){
+form[data-form=purchase] input,form[data-form=purchaseedit] input,form[data-form=expense] input,form[data-form=general] input,form[data-form=asset] input,form[data-form=assetedit] input,form[data-form=qitem] input,form[data-form=item] input,form[data-form=journal] input,form[data-form=tx] input,form[data-form=pendfix] input,form[data-form=opname] input,
+form[data-form=purchase] select,form[data-form=purchaseedit] select,form[data-form=expense] select,form[data-form=general] select,form[data-form=asset] select,form[data-form=assetedit] select,form[data-form=qitem] select,form[data-form=item] select,form[data-form=journal] select,form[data-form=tx] select,form[data-form=pendfix] select,form[data-form=opname] select,
+form[data-form=purchase] textarea,form[data-form=purchaseedit] textarea,form[data-form=expense] textarea,form[data-form=general] textarea,form[data-form=asset] textarea,form[data-form=assetedit] textarea,form[data-form=qitem] textarea,form[data-form=item] textarea,form[data-form=journal] textarea,form[data-form=tx] textarea,form[data-form=pendfix] textarea,form[data-form=opname] textarea,
+form[data-form=purchase] .cb-in,form[data-form=purchaseedit] .cb-in,form[data-form=expense] .cb-in,form[data-form=general] .cb-in,form[data-form=asset] .cb-in,form[data-form=assetedit] .cb-in,form[data-form=qitem] .cb-in,form[data-form=item] .cb-in,form[data-form=journal] .cb-in,form[data-form=tx] .cb-in,form[data-form=pendfix] .cb-in,form[data-form=opname] .cb-in,
+form[data-form=purchase] .money-wrap input,form[data-form=purchaseedit] .money-wrap input,form[data-form=expense] .money-wrap input,form[data-form=general] .money-wrap input,form[data-form=asset] .money-wrap input,form[data-form=assetedit] .money-wrap input,form[data-form=qitem] .money-wrap input,form[data-form=item] .money-wrap input,form[data-form=journal] .money-wrap input,form[data-form=tx] .money-wrap input,form[data-form=pendfix] .money-wrap input,form[data-form=opname] .money-wrap input,
+form[data-form=purchase] .date-wrap input,form[data-form=purchaseedit] .date-wrap input,form[data-form=expense] .date-wrap input,form[data-form=general] .date-wrap input,form[data-form=asset] .date-wrap input,form[data-form=assetedit] .date-wrap input,form[data-form=qitem] .date-wrap input,form[data-form=item] .date-wrap input,form[data-form=journal] .date-wrap input,form[data-form=tx] .date-wrap input,form[data-form=pendfix] .date-wrap input,form[data-form=opname] .date-wrap input{font-size:calc(14px*var(--fs))!important;letter-spacing:0}
+form[data-form=purchase] input::placeholder,form[data-form=purchaseedit] input::placeholder,form[data-form=expense] input::placeholder,form[data-form=general] input::placeholder,form[data-form=asset] input::placeholder,form[data-form=assetedit] input::placeholder,form[data-form=qitem] input::placeholder,form[data-form=item] input::placeholder,form[data-form=journal] input::placeholder,form[data-form=tx] input::placeholder,form[data-form=pendfix] input::placeholder,form[data-form=opname] input::placeholder,form[data-form=purchase] .cb-in::placeholder,form[data-form=purchaseedit] .cb-in::placeholder,form[data-form=expense] .cb-in::placeholder,form[data-form=general] .cb-in::placeholder,form[data-form=asset] .cb-in::placeholder,form[data-form=assetedit] .cb-in::placeholder,form[data-form=qitem] .cb-in::placeholder,form[data-form=item] .cb-in::placeholder,form[data-form=journal] .cb-in::placeholder,form[data-form=tx] .cb-in::placeholder,form[data-form=pendfix] .cb-in::placeholder,form[data-form=opname] .cb-in::placeholder{font-size:calc(14px*var(--fs))!important}
+form[data-form=purchase] .f>span,form[data-form=purchaseedit] .f>span,form[data-form=expense] .f>span,form[data-form=general] .f>span,form[data-form=asset] .f>span,form[data-form=assetedit] .f>span,form[data-form=qitem] .f>span,form[data-form=item] .f>span,form[data-form=journal] .f>span,form[data-form=tx] .f>span,form[data-form=pendfix] .f>span,form[data-form=opname] .f>span,form[data-form=purchase] .jr-head,form[data-form=purchaseedit] .jr-head,form[data-form=expense] .jr-head,form[data-form=general] .jr-head,form[data-form=asset] .jr-head,form[data-form=assetedit] .jr-head,form[data-form=qitem] .jr-head,form[data-form=item] .jr-head,form[data-form=journal] .jr-head,form[data-form=tx] .jr-head,form[data-form=pendfix] .jr-head,form[data-form=opname] .jr-head{font-size:calc(12.5px*var(--fs))}
+form[data-form=purchase] .cb-in,form[data-form=purchaseedit] .cb-in,form[data-form=expense] .cb-in,form[data-form=general] .cb-in,form[data-form=asset] .cb-in,form[data-form=assetedit] .cb-in,form[data-form=qitem] .cb-in,form[data-form=item] .cb-in,form[data-form=journal] .cb-in,form[data-form=tx] .cb-in,form[data-form=pendfix] .cb-in,form[data-form=opname] .cb-in{text-overflow:ellipsis}
+.cb-opt,.cb-empty{font-size:calc(14px*var(--fs))!important}
+}
+
 </style>
 </head>
 <body>
@@ -5344,7 +5363,10 @@ function cbField(name,label,ph){
 /* kolom akun: daftar rekomendasi baru muncul setelah user mengetik */
 const CB_ACC=new Set(['jDebit','jCredit','jPrepaid','jAny','payCash','eExp','ePrepaid','pCredit','pInvAcc','pExpAcc','creditAcc','fixedAcc','accumAcc','expAcc']);
 /* HP + pop-up: daftar tampil di dalam alur form (bukan melayang), jadi tidak bisa tertutup keyboard atau bergeser */
-const cbInline=box=>!!((box.closest('.sheet')||/^(mnAdd|rcAdd)$/.test(box.dataset.cb))&&!box.classList.contains('jr-acc')&&window.matchMedia&&matchMedia('(pointer:coarse)').matches);
+const cbCoarse=()=>!!(window.matchMedia&&matchMedia('(pointer:coarse)').matches);
+const cbInline=box=>/^(mnAdd|rcAdd)$/.test(box.dataset.cb)&&cbCoarse();
+/* HP: daftar pilihan menempel tepat di bawah kolom (melayang, tidak mendorong isi form), jadi layout tidak naik-turun saat mengetik */
+const cbOverlay=box=>cbCoarse()&&box.dataset.cb!=='rcType'&&!cbInline(box)&&!box.closest('table,.tbl-wrap,.ast-wrap,.ri-tbl');
 /* Daftar pilihan akun: posisi tetap di layar, tinggi mengikuti ruang tersedia (atas/bawah), selalu bisa di-scroll */
 function cbPlace(box){
   const list=$('.cb-list',box);if(!list||list.hidden)return;
@@ -5352,6 +5374,19 @@ function cbPlace(box){
   if(box.dataset.cb==='rcType'){list.classList.remove('inl');const st=list.style;st.position='absolute';st.left='0';st.right='0';st.width='auto';st.top='calc(100% + 4px)';st.bottom='auto';st.maxHeight='220px';return}
   if(cbInline(box)){list.classList.add('inl');return}
   list.classList.remove('inl');
+  if(cbOverlay(box)){
+    const cb=$('.cb',box),r=cb.getBoundingClientRect(),pair=box.closest('.acc-pair'),pr=pair?pair.getBoundingClientRect():r;
+    const vv=window.visualViewport,vBot=vv?vv.offsetTop+vv.height:innerHeight,sh=box.closest('.sheet'),nav=document.querySelector('.bottombar');
+    let lim=vBot;
+    if(sh)lim=Math.min(lim,sh.getBoundingClientRect().bottom);
+    else if(nav&&nav.offsetParent!==null)lim=Math.min(lim,nav.getBoundingClientRect().top);
+    const st=list.style;
+    list.classList.add('ovl');
+    st.position='absolute';st.left=(pr.left-r.left)+'px';st.width=pr.width+'px';st.right='auto';st.top='calc(100% + 4px)';st.bottom='auto';
+    st.maxHeight=Math.max(120,Math.min(240,lim-r.bottom-12))+'px';
+    return;
+  }
+  list.classList.remove('ovl');
   const r=$('.cb',box).getBoundingClientRect(),pair=box.closest('.acc-pair'),pr=pair?pair.getBoundingClientRect():r;
   const vv=window.visualViewport,vTop=vv?vv.offsetTop:0,vBot=vv?vv.offsetTop+vv.height:innerHeight,nav=document.querySelector('.bottombar');
   const inSheet=!!box.closest('.sheet'),coarse=window.matchMedia&&matchMedia('(pointer:coarse)').matches;
@@ -5365,15 +5400,30 @@ function cbPlace(box){
 /* HP: geser kolom ke bagian atas pop-up supaya daftar punya ruang di bawahnya */
 function cbReveal(box){
   if(/^(mnAdd|rcAdd)$/.test(box.dataset.cb)){if(window.matchMedia&&matchMedia('(pointer:coarse)').matches&&(box._rvN=(box._rvN||0)+1)<=2)box.scrollIntoView({block:'start',behavior:'auto'});return}
-  const sh=box.closest('.sheet');if(!sh||!(window.matchMedia&&matchMedia('(pointer:coarse)').matches))return;
-  const hd=$('.sheet-head',sh),r=$('.cb',box).getBoundingClientRect(),sr=sh.getBoundingClientRect();
-  const d=r.top-(sr.top+(hd?hd.offsetHeight:0)+8);
-  if(Math.abs(d)>1)sh.scrollTop+=d;
+  if(!cbCoarse()||!cbOverlay(box))return;
+  const NEED=200,vv=window.visualViewport,vBot=vv?vv.offsetTop+vv.height:innerHeight,vTop=vv?vv.offsetTop:0;
+  const sh=box.closest('.sheet'),r=$('.cb',box).getBoundingClientRect();
+  if(sh){
+    /* di dalam pop-up: geser isi pop-up hanya sebesar ruang yang kurang, tidak pernah menggulung balik */
+    const hd=$('.sheet-head',sh),sr=sh.getBoundingClientRect(),lim=Math.min(vBot,sr.bottom);
+    const lack=NEED-(lim-r.bottom-12),room=r.top-(sr.top+(hd?hd.offsetHeight:0)+8);
+    const d=Math.min(lack,room);
+    if(d>1)sh.scrollTop+=d;
+    return;
+  }
+  /* di halaman: geser layar sekali-dua kali saja agar daftar punya ruang di bawah kolom */
+  if((box._rvN=(box._rvN||0)+1)>3)return;
+  const nav=document.querySelector('.bottombar'),tb=document.querySelector('.topbar');
+  const lim=Math.min(vBot,(nav&&nav.offsetParent!==null)?nav.getBoundingClientRect().top:vBot);
+  const lack=NEED-(lim-r.bottom-12),room=r.top-Math.max(vTop,tb?tb.getBoundingClientRect().bottom:0)-12;
+  const d=Math.min(lack,room);
+  if(d>1)window.scrollBy(0,d);
 }
 /* Sinkronkan pop-up dengan area layar yang terlihat (keyboard HP) */
 function syncVV(){
   const vv=window.visualViewport;if(!vv)return;
-  const kb=innerHeight-vv.height>120&&window.matchMedia&&matchMedia('(pointer:coarse)').matches;
+  const diff=innerHeight-vv.height,was=!!document.querySelector('.sheet-wrap.kb');
+  const kb=(diff>120||(was&&diff>60))&&window.matchMedia&&matchMedia('(pointer:coarse)').matches;
   document.querySelectorAll('.sheet-wrap').forEach(w=>{
     w.classList.toggle('kb',kb);
     if(kb){w.style.setProperty('--vvh',vv.height+'px');w.style.setProperty('--vvt',vv.offsetTop+'px')}
