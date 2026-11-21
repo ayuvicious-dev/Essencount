@@ -743,9 +743,17 @@ form[data-form=debtpay] .f>span{font-size:calc(12px*var(--fs))}
 .bs-asof b:first-child{font-size:calc(15px*var(--fs))}
 .low-tbl th:nth-child(n+3),.low-tbl td:nth-child(n+3){text-align:center!important}
 .low-tbl td:nth-child(4)>span{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+/* Stok Minimum: kolom Nama Produk paling lebar, kolom Minimum & Stok lebarnya tetap; nama panjang dipotong satu baris (…), tidak turun ke baris kedua */
+.low-tbl .no-link{display:block;width:100%;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow-wrap:normal;text-align:left}
+.low-tbl .no-link b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-line-clamp:unset}
+.low-tbl td[data-l="Nama Produk"]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.low-tbl td[data-l="Minimum"],.low-tbl td[data-l="Stok"]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:640px){
-  .pp-row .low-tbl tbody td[data-l="Minimum"]{width:78px;text-align:center!important}
-  .pp-row .low-tbl tbody td[data-l="Stok"]{width:96px;text-align:center!important}
+  .pp-row .low-tbl tbody td[data-l="Nama Produk"]{flex:1 1 0;min-width:0;overflow:hidden;white-space:nowrap!important}
+  .pp-row .low-tbl tbody td[data-l="Minimum"]{flex:0 0 60px;width:60px;max-width:60px;overflow:hidden;text-overflow:ellipsis;text-align:center!important}
+  .pp-row .low-tbl tbody td[data-l="Stok"]{flex:0 0 36px;width:36px;max-width:36px;overflow:hidden;text-align:center!important}
+  .pp-row .low-tbl tbody td[data-l="Stok"] .badge{display:none}
+  .pp-row .low-tbl .no-link b{display:block;-webkit-line-clamp:unset;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 }
 
 .badge.green{background:rgba(10,138,96,.12);color:var(--pos)}
@@ -1640,7 +1648,7 @@ function lowStockHTML(){
   const low=S.items.filter(i=>!i.lowDone&&(i.qty||0)<=(i.min||0)).sort((a,b)=>(a.qty||0)-(b.qty||0)),PG=5,np=Math.max(1,Math.ceil(low.length/PG));
   S.lowPage=Math.min(Math.max(0,S.lowPage||0),np-1);
   const L=low.slice(S.lowPage*PG,S.lowPage*PG+PG),pager=low.length>PG?`<div class="debt-pg"><button type="button" class="btn sm" data-act="low-pg" data-d="-1" aria-label="Sebelumnya"${S.lowPage<=0?' disabled':''}>${ico('chevL',18)}</button><span class="muted">${S.lowPage+1} / ${np}</span><button type="button" class="btn sm" data-act="low-pg" data-d="1" aria-label="Selanjutnya"${S.lowPage>=np-1?' disabled':''}>${ico('chevR',18)}</button></div>`:'';
-  return `<div class="tbl-wrap pp-row"><table class="tbl pp-tbl tbl-m low-tbl" style="min-width:0"><colgroup><col style="width:36px"><col><col style="width:92px"><col style="width:132px"></colgroup><thead><tr><th title="Centang jika sudah ditangani (akan dihapus dari daftar)" aria-label="Selesai ditangani"></th><th style="text-align:left">Nama Produk</th><th>Minimum</th><th>Stok</th></tr></thead><tbody>${L.map(i=>`<tr><td class="pp-chk" data-l="Selesai ditangani"><input type="checkbox" data-act="low-done" data-id="${esc(i.id)}" aria-label="Tandai sudah ditangani"></td><td data-l="Nama Produk"><button type="button" class="link no-link" data-act="edit-item" data-id="${esc(i.id)}"><b>${esc(i.name)}</b></button></td><td class="nowrap" data-l="Minimum">${i.min||0} ${esc(i.unit||'')}</td><td class="nowrap" data-l="Stok"><span><b class="num ${(i.qty||0)<=0?'neg':''}">${+(i.qty||0).toFixed(2)}</b> ${(i.qty||0)<=0?'':'<span class="badge">Menipis</span>'}</span></td></tr>`).join('')}</tbody></table></div>${pager}`;
+  return `<div class="tbl-wrap pp-row"><table class="tbl pp-tbl tbl-m low-tbl" style="min-width:0"><colgroup><col style="width:36px"><col><col style="width:96px"><col style="width:88px"></colgroup><thead><tr><th title="Centang jika sudah ditangani (akan dihapus dari daftar)" aria-label="Selesai ditangani"></th><th style="text-align:left">Nama Produk</th><th>Minimum</th><th>Stok</th></tr></thead><tbody>${L.map(i=>`<tr><td class="pp-chk" data-l="Selesai ditangani"><input type="checkbox" data-act="low-done" data-id="${esc(i.id)}" aria-label="Tandai sudah ditangani"></td><td data-l="Nama Produk"><button type="button" class="link no-link" data-act="edit-item" data-id="${esc(i.id)}" title="${esc(i.name)}"><b>${esc(i.name)}</b></button></td><td class="nowrap" data-l="Minimum">${i.min||0} ${esc(i.unit||'')}</td><td class="nowrap" data-l="Stok"><span><b class="num ${(i.qty||0)<=0?'neg':''}">${+(i.qty||0).toFixed(2)}</b> ${(i.qty||0)<=0?'':'<span class="badge">Menipis</span>'}</span></td></tr>`).join('')}</tbody></table></div>${pager}`;
 }
 function refreshLowList(){const b=$('#lowBody');if(b)b.innerHTML=lowStockHTML()}
 function refreshDebtList(){const b=$('#debtBody');if(b)b.innerHTML=debtTableHTML()}
