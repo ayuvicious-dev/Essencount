@@ -944,6 +944,15 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @media (pointer:coarse){input,select,textarea,.cb-in{font-size:max(16px,calc(16px*var(--fs)))!important}}
 /* form resep di HP: isian seragam berhuruf kecil agar tidak terpotong (zoom otomatis sudah dicegah oleh viewport maximum-scale=1) */
 @media (pointer:coarse){form[data-form=recipe] input,form[data-form=recipe] select,form[data-form=recipe] .cb-in{font-size:calc(13px*var(--fs))!important}}
+/* Klik 2x di tabel: kotak edit pas di dalam sel, tidak menutupi kolom sebelah */
+.cell-ed{min-width:0;width:100%}
+.cell-ed .cb::after{display:none}
+.cell-ed .cb-in{padding:0 4px!important;border-radius:8px;text-align:center;min-width:0}
+.cell-ed input.cb-in{height:34px!important}
+.cell-ed textarea.cb-in{display:block;min-height:34px!important;height:auto;padding:7px 4px!important;line-height:1.3;resize:none;overflow:hidden;white-space:normal;overflow-wrap:anywhere}
+textarea.coa-edit{height:auto;min-height:32px;padding:6px 8px;line-height:1.3;resize:none;overflow:hidden;white-space:normal;overflow-wrap:anywhere;display:block}
+.ast-c input.ast-edit,.ast-c select.ast-edit{padding:0 3px}
+.cell-ed .cb-in{box-shadow:inset 0 0 0 1.5px var(--primary)}
 /* HP: daftar pilihan akun/barang melayang di bawah kolom, layout form tidak bergeser saat mengetik */
 .cb-list.ovl{position:absolute;z-index:70;margin:0;box-shadow:0 10px 28px rgba(14,26,51,.18)}
 .sheet{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
@@ -4761,6 +4770,8 @@ function itemAccEdit(v){
   inp.focus();
 }
 /* Klik 2x (edit langsung): kotak edit memakai ukuran huruf yang sama dengan teks aslinya, jadi tampilan tidak membesar/'zoom' saat mengedit */
+/* kotak edit berupa textarea yang tingginya mengikuti isi: seluruh tulisan terlihat (tidak terpotong), lebar tetap */
+function dblGrow(ta){const g=()=>{ta.style.height='auto';const h=ta.scrollHeight;if(h)ta.style.height=h+'px'};ta.addEventListener('input',g);g();setTimeout(g,0);setTimeout(g,260)}
 function dblFont(inp,src){try{const fs=src&&getComputedStyle(src).fontSize;if(fs)inp.style.setProperty('font-size',fs,'important')}catch(_){}}
 /* klik 2x stock minimum di tabel Inventory -> ubah angka langsung */
 function itemMinEdit(td){
@@ -4768,7 +4779,7 @@ function itemMinEdit(td){
   const id=td.dataset.id,it=S.items.find(i=>i.id===id);if(!it)return;
   const cur=+it.min||0;
   const inp=document.createElement('input');inp.type='number';inp.step='any';inp.min='0';inp.inputMode='decimal';inp.value=cur;inp.setAttribute('aria-label','Stock minimum');
-  inp.style.cssText='width:90px;height:36px;padding:0 8px;border:1.5px solid var(--line);border-radius:10px;font:inherit;text-align:center;background:var(--card,#fff);color:inherit';
+  inp.style.cssText='width:100%;min-width:0;box-sizing:border-box;height:36px;padding:0 4px;border:1.5px solid var(--line);border-radius:10px;font:inherit;text-align:center;background:var(--card,#fff);color:inherit';
   dblFont(inp,td);
   td.textContent='';td.appendChild(inp);
   let done=false;
@@ -4788,12 +4799,12 @@ function itemCellEdit(td,kind){
   const id=td.dataset.id,it=S.items.find(i=>i.id===id);if(!it)return;
   const name=kind==='unit'?'itmUnit':'itmKlas';S.itmCell=id;
   const cur=kind==='unit'?(it.unit||''):(/bahan/i.test(it.klas||'')?'Persediaan Bahan':/barang/i.test(it.klas||'')?'Persediaan Barang':'');
-  const box=document.createElement('div');box.className='f';box.style.cssText='margin:0;min-width:130px';box.dataset.cb=name;box.dataset.cell=kind;box.dataset.id=id;if(kind==='unit')box.dataset.free='1';
-  box.innerHTML=`<div class="cb"><input class="cb-in" type="text" autocomplete="off" role="combobox" aria-expanded="false" aria-label="${kind==='unit'?'Satuan':'Klasifikasi'}" style="text-align:center"><input type="hidden" name="${name}"><div class="cb-list" role="listbox" hidden></div></div>`;
+  const box=document.createElement('div');box.className='f cell-ed';box.style.cssText='margin:0;min-width:0;width:100%';box.dataset.cb=name;box.dataset.cell=kind;box.dataset.id=id;if(kind==='unit')box.dataset.free='1';
+  box.innerHTML=`<div class="cb"><textarea class="cb-in" rows="1" autocomplete="off" role="combobox" aria-expanded="false" aria-label="${kind==='unit'?'Satuan':'Klasifikasi'}" style="text-align:center"></textarea><input type="hidden" name="${name}"><div class="cb-list" role="listbox" hidden></div></div>`;
   const fz=getComputedStyle(td).fontSize;
   td.textContent='';td.appendChild(box);
   const o=cbOptions(name).find(x=>x.v===cur);cbSet(box,cur,o?o.l:cur);
-  const inp=$('.cb-in',box);inp.style.setProperty('font-size',fz,'important');
+  const inp=$('.cb-in',box);inp.style.setProperty('font-size',fz,'important');dblGrow(inp);
   inp.addEventListener('keydown',e=>{
     if(e.key==='Escape'){e.preventDefault();e.stopPropagation();box.dataset.done='1';render(true)}
     else if(e.key==='Enter'&&kind==='unit'){e.preventDefault();e.stopPropagation();itemCellPicked(box,$('input[type=hidden]',box).value||inp.value)}
@@ -4816,10 +4827,10 @@ function itemKlasEdit(td){itemCellEdit(td,'klas')}
 function itemNameEdit(b){
   const td=b.closest('td');if(!td||td.querySelector('.itm-nm-edit'))return;
   const id=b.dataset.id,it=S.items.find(i=>i.id===id);if(!it)return;
-  const inp=document.createElement('input');inp.type='text';inp.className='itm-nm-edit';inp.maxLength=80;inp.value=it.name||'';inp.setAttribute('aria-label','Nama barang');inp.autocomplete='off';
-  inp.style.cssText='width:100%;min-width:0;box-sizing:border-box;height:38px;padding:0 10px;border:1.5px solid var(--line);border-radius:10px;font:inherit;font-weight:700;background:var(--card,#fff);color:inherit';
+  const inp=document.createElement('textarea');inp.rows=1;inp.className='itm-nm-edit';inp.maxLength=80;inp.value=it.name||'';inp.setAttribute('aria-label','Nama barang');inp.autocomplete='off';
+  inp.style.cssText='display:block;width:100%;min-width:0;box-sizing:border-box;min-height:38px;padding:8px 10px;line-height:1.3;resize:none;overflow:hidden;white-space:normal;overflow-wrap:anywhere;border:1.5px solid var(--line);border-radius:10px;font:inherit;font-weight:700;background:var(--card,#fff);color:inherit';
   dblFont(inp,b.querySelector('b')||b);
-  b.style.display='none';b.insertAdjacentElement('afterend',inp);
+  b.style.display='none';b.insertAdjacentElement('afterend',inp);dblGrow(inp);
   let done=false;
   const finish=save=>{
     if(done)return;done=true;
@@ -5064,11 +5075,11 @@ function bsRenameStart(nm,node){
   if(!a||node.querySelector('.bs-rename'))return false;
   const nr=nm.getBoundingClientRect(),pr=node.getBoundingClientRect(),left=Math.max(0,nr.left-pr.left-4);
   node.style.position='relative';
-  const inp=document.createElement('input');
-  inp.className='coa-edit bs-rename';inp.type='text';inp.value=a.name;inp.maxLength=80;inp.autocomplete='off';
+  const inp=document.createElement('textarea');inp.rows=1;
+  inp.className='coa-edit bs-rename';inp.value=a.name;inp.maxLength=80;inp.autocomplete='off';
   inp.setAttribute('aria-label','Nama akun');inp.dataset.id=a.id;
   inp.style.cssText='position:absolute;z-index:7;left:'+left+'px;top:'+Math.max(0,nr.top-pr.top+nr.height/2-16)+'px;width:'+Math.max(150,Math.min(pr.width-left-8,pr.width*.62))+'px';
-  dblFont(inp,nm);node.appendChild(inp);inp.focus();inp.select();
+  dblFont(inp,nm);node.appendChild(inp);dblGrow(inp);inp.focus();inp.select();
   inp.addEventListener('blur',()=>setTimeout(()=>{inp.remove();node.style.position='';render(true)},0));
   return true;
 }
@@ -5077,11 +5088,11 @@ function coaCatEditStart(b){
   const sec=b.closest('.coa-cat');if(!sec||sec.querySelector('.cat-edit'))return;
   const br=b.getBoundingClientRect(),sr=sec.getBoundingClientRect(),left=Math.max(0,br.left-sr.left-4);
   sec.style.position='relative';
-  const inp=document.createElement('input');
-  inp.className='coa-edit cat-edit';inp.type='text';inp.value=b.dataset.old||b.textContent;inp.maxLength=60;inp.autocomplete='off';
+  const inp=document.createElement('textarea');inp.rows=1;
+  inp.className='coa-edit cat-edit';inp.value=b.dataset.old||b.textContent;inp.maxLength=60;inp.autocomplete='off';
   inp.setAttribute('aria-label','Nama kategori');inp.dataset.cat=b.dataset.cat||'';inp.dataset.old=b.dataset.old||'';
   inp.style.cssText='position:absolute;z-index:7;left:'+left+'px;top:'+Math.max(0,br.top-sr.top+br.height/2-16)+'px;width:'+Math.max(180,Math.min(sr.width-left-12,sr.width*.7))+'px';
-  dblFont(inp,b);sec.appendChild(inp);inp.focus();inp.select();
+  dblFont(inp,b);sec.appendChild(inp);dblGrow(inp);inp.focus();inp.select();
   inp.addEventListener('blur',()=>setTimeout(()=>{inp.remove();sec.style.position=''},0));
 }
 function coaCatSave(inp){
@@ -5102,9 +5113,9 @@ function coaCatSave(inp){
 function coaEditStart(nm){
   const row=nm.closest('.coa-row'),a=row&&S.accounts.find(x=>x.id===row.dataset.id);
   if(!a||nm.querySelector('.coa-edit'))return;
-  const host=nm.querySelector('.nmt')||nm,inp=document.createElement('input');
-  inp.className='coa-edit';inp.type='text';inp.value=a.name;inp.maxLength=80;inp.setAttribute('aria-label','Nama akun');inp.dataset.id=a.id;dblFont(inp,host);
-  host.textContent='';host.appendChild(inp);inp.focus();inp.select();
+  const host=nm.querySelector('.nmt')||nm,inp=document.createElement('textarea');inp.rows=1;
+  inp.className='coa-edit';inp.value=a.name;inp.maxLength=80;inp.setAttribute('aria-label','Nama akun');inp.dataset.id=a.id;dblFont(inp,host);
+  host.textContent='';host.appendChild(inp);dblGrow(inp);inp.focus();inp.select();
 }
 function assetCellEdit(td){
   if(td.dataset.src==='buy')return buyCellEdit(td);
@@ -5398,7 +5409,8 @@ function cbPlace(box){
   const inSheet=!!box.closest('.sheet'),coarse=window.matchMedia&&matchMedia('(pointer:coarse)').matches;
   const lim=(!inSheet&&nav&&nav.offsetParent!==null)?Math.min(vBot,nav.getBoundingClientRect().top):vBot;
   const below=lim-r.bottom-12,above=r.top-vTop-12,up=!(coarse&&inSheet)&&below<200&&above>below;
-  list.style.left=pr.left+'px';list.style.width=pr.width+'px';
+  if(box.dataset.cell){const w=Math.max(pr.width,150),l=Math.max(8,Math.min(pr.left,innerWidth-w-8));list.style.left=l+'px';list.style.width=w+'px'}
+  else{list.style.left=pr.left+'px';list.style.width=pr.width+'px'}
   list.style.maxHeight=Math.max(110,Math.min(340,up?above:below))+'px';
   if(up){list.style.top='auto';list.style.bottom=(innerHeight-r.top+4)+'px'}
   else{list.style.bottom='auto';list.style.top=(r.bottom+4)+'px'}
