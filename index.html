@@ -741,8 +741,8 @@ form[data-form=debtpay] .f>span{font-size:calc(12px*var(--fs))}
 .bs-date{flex:1 1 200px;max-width:260px}
 .bs-asof{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 0 12px}
 .bs-asof b:first-child{font-size:calc(15px*var(--fs))}
-.low-tbl th:nth-child(n+2),.low-tbl td:nth-child(n+2){text-align:center!important}
-.low-tbl td:nth-child(3)>span{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.low-tbl th:nth-child(n+3),.low-tbl td:nth-child(n+3){text-align:center!important}
+.low-tbl td:nth-child(4)>span{display:inline-flex;align-items:center;justify-content:center;gap:6px}
 @media(max-width:640px){
   .pp-row .low-tbl tbody td[data-l="Minimum"]{width:78px;text-align:center!important}
   .pp-row .low-tbl tbody td[data-l="Stok"]{width:96px;text-align:center!important}
@@ -1170,7 +1170,21 @@ function autoLogOps(ops){
   });
   return out;
 }
+/* centang 'sudah ditangani' di Stok Minimum otomatis dilepas bila stok sudah di atas minimum (supaya barang muncul lagi saat menipis berikutnya) */
+function lowResetOps(ops){
+  const by={},mn={},out=[];
+  ops.forEach(o=>{if(o.col!=='items')return;
+    if(o.t==='inc'&&o.field==='qty')by[o.id]=(by[o.id]||0)+o.by;
+    else if(o.t==='set'&&o.data&&o.data.min!==undefined)mn[o.id]=+o.data.min||0});
+  new Set([...Object.keys(by),...Object.keys(mn)]).forEach(id=>{
+    const it=S.items.find(i=>i.id===id);if(!it||!it.lowDone)return;
+    const q=(it.qty||0)+(by[id]||0),m=id in mn?mn[id]:(it.min||0);
+    if(q>m)out.push({t:'set',col:'items',id,data:{lowDone:false}});
+  });
+  return out;
+}
 function commit(ops){
+  ops=ops.concat(lowResetOps(ops));
   ops=ops.concat(autoLogOps(ops));
   if(S.demo){
     const arr=c=>c==='transactions'?S.tx:c==='assets'?S.assets:c==='accounts'?S.accounts:c==='imports'?S.imports:c==='txlog'?S.txlog:c==='journals'?S.journals:c==='recipes'?S.recipes:c==='menus'?S.menus:S.items;
@@ -1320,7 +1334,7 @@ function viewDashboard(){
   })();
   /* pendapatan & beban per bulan, 3 bulan terakhir (sumber sama dengan menu Laba Rugi; pendapatan = usaha + lain-lain, beban = HPP + operasional + lain-lain) */
   const plSeries=series.map(x=>{let p=0,b=0;try{const r=plCalc(x.k+'-01',x.k===cur?today():jEom(x.k));p=(r.pend||0)+(r.pl||0);b=(r.hpp||0)+(r.beban||0)+(r.bl||0)}catch(e){}return{k:x.k,p,b}});
-  const low=S.items.filter(i=>(i.qty||0)<=(i.min||0)).sort((a,b)=>(a.qty||0)-(b.qty||0));
+  const low=S.items.filter(i=>!i.lowDone&&(i.qty||0)<=(i.min||0)).sort((a,b)=>(a.qty||0)-(b.qty||0));
   /* stok akan kadaluwarsa: batch pembelian yang kadaluwarsanya jatuh dalam 1 bulan ke depan */
   const expAll=expAllList();
   /* reminder biaya dibayar di muka: tampil mulai H-3 sebelum masa amortisasi habis, tetap tampil jika terlewat, hilang jika dicentang (diperpanjang) */
@@ -1623,10 +1637,10 @@ function debtTableHTML(){
   return `<div class="tbl-wrap debt-scroll"><table class="tbl pp-tbl tbl-m" style="min-width:0"><colgroup><col style="width:32%"><col style="width:19%"><col style="width:19%"><col style="width:16%"><col style="width:14%"></colgroup><thead><tr><th>Ket</th><th>Rp</th><th>Tgl</th><th>Sisa</th><th>Aksi</th></tr></thead><tbody>${DS.length?DS.map(x=>`<tr><td data-l="Keterangan"><button type="button" class="link no-link" data-act="jrn-open"${x.src==='a'?' data-k="a"':''} data-id="${esc(x.id)}"><b>${esc(x.desc||coaNameOnly(x.acc))}</b></button></td><td class="num nowrap" data-l="Nominal"><span><b>${rp(x.rest)}</b>${x.paid>0?`<div class="muted">dari ${rp(x.amt)}</div>`:''}</span></td><td class="nowrap debt-dt" data-l="Jatuh tempo" data-src="${x.src}" data-id="${esc(x.id)}" title="Klik 2x untuk ubah tanggal" style="cursor:pointer">${fmtDate(x.due)}</td><td data-l="Sisa waktu"><b class="${x.left<=3?'neg':''}">${x.left>0?'H-'+x.left:x.left===0?'Hari ini':'Lewat '+(-x.left)+' hari'}</b></td><td class="tbl-act"><button type="button" class="btn sm sq debt-pay" data-act="debt-pay" data-src="${x.src}" data-id="${esc(x.id)}" aria-label="Bayar" title="Bayar">${ico('banknote',20)}</button></td></tr>`).join(''):`<tr><td colspan="5" class="muted tbl-empty" style="text-align:center;padding:22px 12px">${S.debtQ?'Tidak ada hasil untuk pencarian ini.':'Tidak ada pengingat hutang.'}</td></tr>`}</tbody></table></div>${pager}${DA.length?`<div class="debt-total"><span>${S.debtQ?'Total hasil pencarian':'Total hutang'}</span><b class="num">${rp(DA.reduce((t,x)=>t+x.rest,0))}</b></div>`:''}`;
 }
 function lowStockHTML(){
-  const low=S.items.filter(i=>(i.qty||0)<=(i.min||0)).sort((a,b)=>(a.qty||0)-(b.qty||0)),PG=5,np=Math.max(1,Math.ceil(low.length/PG));
+  const low=S.items.filter(i=>!i.lowDone&&(i.qty||0)<=(i.min||0)).sort((a,b)=>(a.qty||0)-(b.qty||0)),PG=5,np=Math.max(1,Math.ceil(low.length/PG));
   S.lowPage=Math.min(Math.max(0,S.lowPage||0),np-1);
   const L=low.slice(S.lowPage*PG,S.lowPage*PG+PG),pager=low.length>PG?`<div class="debt-pg"><button type="button" class="btn sm" data-act="low-pg" data-d="-1" aria-label="Sebelumnya"${S.lowPage<=0?' disabled':''}>${ico('chevL',18)}</button><span class="muted">${S.lowPage+1} / ${np}</span><button type="button" class="btn sm" data-act="low-pg" data-d="1" aria-label="Selanjutnya"${S.lowPage>=np-1?' disabled':''}>${ico('chevR',18)}</button></div>`:'';
-  return `<div class="tbl-wrap pp-row"><table class="tbl pp-tbl tbl-m low-tbl" style="min-width:0"><colgroup><col><col style="width:92px"><col style="width:132px"></colgroup><thead><tr><th style="text-align:left">Nama Produk</th><th>Minimum</th><th>Stok</th></tr></thead><tbody>${L.map(i=>`<tr><td data-l="Nama Produk"><button type="button" class="link no-link" data-act="edit-item" data-id="${esc(i.id)}"><b>${esc(i.name)}</b></button></td><td class="nowrap" data-l="Minimum">${i.min||0} ${esc(i.unit||'')}</td><td class="nowrap" data-l="Stok"><span><b class="num ${(i.qty||0)<=0?'neg':''}">${+(i.qty||0).toFixed(2)}</b> ${(i.qty||0)<=0?'':'<span class="badge">Menipis</span>'}</span></td></tr>`).join('')}</tbody></table></div>${pager}`;
+  return `<div class="tbl-wrap pp-row"><table class="tbl pp-tbl tbl-m low-tbl" style="min-width:0"><colgroup><col style="width:36px"><col><col style="width:92px"><col style="width:132px"></colgroup><thead><tr><th title="Centang jika sudah ditangani (akan dihapus dari daftar)" aria-label="Selesai ditangani"></th><th style="text-align:left">Nama Produk</th><th>Minimum</th><th>Stok</th></tr></thead><tbody>${L.map(i=>`<tr><td class="pp-chk" data-l="Selesai ditangani"><input type="checkbox" data-act="low-done" data-id="${esc(i.id)}" aria-label="Tandai sudah ditangani"></td><td data-l="Nama Produk"><button type="button" class="link no-link" data-act="edit-item" data-id="${esc(i.id)}"><b>${esc(i.name)}</b></button></td><td class="nowrap" data-l="Minimum">${i.min||0} ${esc(i.unit||'')}</td><td class="nowrap" data-l="Stok"><span><b class="num ${(i.qty||0)<=0?'neg':''}">${+(i.qty||0).toFixed(2)}</b> ${(i.qty||0)<=0?'':'<span class="badge">Menipis</span>'}</span></td></tr>`).join('')}</tbody></table></div>${pager}`;
 }
 function refreshLowList(){const b=$('#lowBody');if(b)b.innerHTML=lowStockHTML()}
 function refreshDebtList(){const b=$('#debtBody');if(b)b.innerHTML=debtTableHTML()}
@@ -5932,6 +5946,7 @@ const ACT={
   'jrn-open':t=>{const id=t.dataset.id;if(t.dataset.k==='a'){assetEdit(id);return}const x=S.journals.find(i=>i.id===id);if(!x)return;if(x.kind==='opname'){toast('Stock opname tidak bisa diubah. Hapus lalu input ulang dari Inventory.');return}if(x.kind==='purchase')purchaseEdit(x.id);else if(x.kind==='general'){S.jrnEditId=x.id;render(true);window.scrollTo(0,0)}else journalForm(x)},
   'jrn-more':()=>{S.jrnLimit=(S.jrnLimit||50)+50;refreshJrnList()},
   'new-expense':()=>{if(S.page!=='biaya')S.back=S.page;closeSheet();go('biaya')},
+  'low-done':t=>{const x=S.items.find(i=>i.id===t.dataset.id);if(!x)return;x.lowDone=true;commit([{t:'set',col:'items',id:x.id,data:{lowDone:true}}]);toast('Dihapus dari daftar stok minimum');render(true)},
   'expiry-done':t=>{const x=S.journals.find(i=>i.id===t.dataset.id);if(!x)return;x.expiryDone=true;commit([{t:'set',col:'journals',id:x.id,data:{expiryDone:true}}]);toast('Dihapus dari daftar reminder');render(true)},
   'debt-pay':t=>debtPaySheet(t.dataset.src,t.dataset.id),
   'debt-done':t=>{const a=t.dataset.src==='a',arr=a?S.assets:S.journals,x=arr.find(i=>i.id===t.dataset.id);if(!x)return;x.debtDone=true;commit([{t:'set',col:a?'assets':'journals',id:x.id,data:{debtDone:true}}]);toast('Pengingat hutang ditandai sudah dibayar');render(true)},
