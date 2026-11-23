@@ -494,6 +494,11 @@ small{font-size:calc(12.5px*var(--fs));color:var(--muted)}
   .sheet.sheet-fit form.compact .actions{padding-top:8px;padding-bottom:10px}
   .sheet.sheet-fit form.compact .actions .btn{height:40px;min-height:0}
 }
+/* Nominal & Amortisasi sejajar: kotak centang setinggi kolom input dan sebaris dengan kolom Nominal (bukan dengan labelnya) */
+.sheet form.compact .nom-row{align-items:end}
+.sheet form.compact .nom-row .chk.slim{height:42px;margin:0 0 10px;padding:0 14px;box-sizing:border-box;align-items:center;min-width:0}
+.sheet form.compact .nom-row .chk.slim input{margin:0}
+@media(max-height:760px){.sheet.sheet-fit form.compact .nom-row .chk.slim{height:38px;margin:0 0 6px}}
 .btn.sq{width:44px;height:44px;padding:0;flex:none}
 .tbl-wrap{overflow-x:auto;margin:0 -4px}
 .tbl th.ast-sort{cursor:pointer;user-select:none}
@@ -1503,7 +1508,7 @@ function journalForm(j){
     <label class="f"><span>Keterangan</span><input name="desc" maxlength="120" autocomplete="off" value="${esc(t.desc||'')}"></label>
     <div class="two acc-pair">${cbField('jDebit','Akun debit','Cari akun debit').replace('class="f"','class="f" data-addacc="1"')}${cbField('jCredit','Akun kredit','Cari akun kredit').replace('class="f"','class="f" data-addacc="1"')}</div>
     ${debtBlock(t,isDebtAcc(t.creditAcc))}
-    <div class="two"><label class="f"><span>Nominal (Rp)</span><div class="money-wrap"><i>Rp</i><input name="amount" class="money" inputmode="numeric" autocomplete="off" placeholder="0" value="${t.amount?nf.format(t.amount):''}"></div></label><label class="chk slim"><input type="checkbox" name="amort"${t.amort?' checked':''}><span><b>Amortisasi</b></span></label></div>
+    <div class="two nom-row"><label class="f"><span>Nominal (Rp)</span><div class="money-wrap"><i>Rp</i><input name="amount" class="money" inputmode="numeric" autocomplete="off" placeholder="0" value="${t.amount?nf.format(t.amount):''}"></div></label><label class="chk slim"><input type="checkbox" name="amort"${t.amort?' checked':''}><span><b>Amortisasi</b></span></label></div>
     <div class="two">${am('<label class="f"><span>Jumlah hari</span><input type="number" name="days" inputmode="numeric" min="1" step="1" value="'+(t.days||'')+'"></label>')}
     ${am(cbField('jPrepaid','Akun dibayar di muka','Cari akun dibayar di muka').replace('class="f"','class="f" data-addacc="1"'))}</div>
     <p class="err" id="formErr" role="alert"></p>
