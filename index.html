@@ -1314,7 +1314,7 @@ function refreshPrepaidList(){const b=$('#ppBody');if(b)b.innerHTML=prepaidHTML(
 function refreshRecList(){const l=$('#recList');if(l)l.innerHTML=recListHTML()}
 function recListHTML(){
   const d=S.recDate||today();let L=[];
-  try{L=jrnEntries().filter(e=>e.date===d&&['Aset','Biaya','Jurnal Umum','Pembelian'].includes(e.source)&&!/^Produksi sub-resep/i.test(e.desc||'')).sort((a,b)=>String(b.no).localeCompare(String(a.no),'id',{numeric:true}))}catch(e){L=[]}
+  try{L=jrnEntries().filter(e=>e.date===d&&['Aset','Biaya','Jurnal Umum','Transaksi Cepat','Pembelian'].includes(e.source)&&!/^Produksi sub-resep/i.test(e.desc||'')).sort((a,b)=>String(b.no).localeCompare(String(a.no),'id',{numeric:true}))}catch(e){L=[]}
   if(!L.length)return `<p class="muted">Tidak ada transaksi pada ${esc(dmy(d))}.</p>`;
   const PG=5,np=Math.max(1,Math.ceil(L.length/PG));S.recPage=Math.min(Math.max(0,S.recPage||0),np-1);
   const LP=L.slice(S.recPage*PG,S.recPage*PG+PG);
